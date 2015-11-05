@@ -1,0 +1,3 @@
+[submodule "repos/Core"]
+	path = repos/Core
+	url = git@github.com:DataForJustice/Core.git
