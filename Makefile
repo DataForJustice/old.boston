@@ -26,10 +26,7 @@ bower_init:
 	$(BOWER) install queue-async 
 	$(BOWER) install scrollmagic
 bower_update:
-	$(BOWER) update jquery
-	$(BOWER) update d3
-	$(BOWER) update scrollmagic
-	$(BOWER) update queue-async
+	find . -name bower.json -exec dirname {} \; | xargs -I {} $(BOWER) -d={} update
 update: repo_update bower_update
 init: repo_update bower_init links
 install: init update 
