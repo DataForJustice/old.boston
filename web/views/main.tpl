@@ -8,7 +8,7 @@
 		<link href='https://fonts.googleapis.com/css?family=Special+Elite|Open+Sans+Condensed:300|Roboto:300italic,900' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="/css/foundation.css"/>
 		<script src="/js/vendor/modernizr.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+		<script src="/js/d3.min.js" charset="utf-8"></script>
 		<script src="http://d3js.org/queue.v1.min.js"></script>
 		<script src="/js/topojson/topojson.js"></script>
 		<script src="/js/vendor/jquery.js"></script>
