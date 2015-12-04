@@ -3,5 +3,6 @@ web/htdocs/js/scenes.js
 web/htdocs/js/jquery.min.js
 web/htdocs/js/d3.min.js
 web/htdocs/js/queue.min.js
+web/htdocs/js/ScrollMagic.min.js
 bower_components
 bowerphp
