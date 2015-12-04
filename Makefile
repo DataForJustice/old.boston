@@ -2,21 +2,24 @@ WGET = wget
 GIT = git
 BOWER = ./bowerphp
 BOWER_URL = http://bowerphp.org/bowerphp.phar
-
+ABSP = $(shell dirname .) 
 repo_update:
 	$(GIT) pull origin master
 	$(GIT) submodule update --init --recursive .
 	$(GIT) submodule foreach --recursive git pull origin master
 	$(GIT) submodule update --recursive
-links: 
-	ln -s repos/Core/PAWS-mvc/htdocs/index.php web/htdocs/ 
-	ln -s repos/Core/PAWS-mvc/config.php web/
-	ln -s repos/Core/PAWS-mvc/libs/smarty/libs/ web/libs/smarty/
-	ln -s repos/Core/PAWS-mvc/outputs web/ 
-	ln -s bower_components/jquery/dist/jquery.min.js web/htdocs/js/
-	ln -s bower_components/queue-async/queue.min.js web/htdocs/js/
-	ln -s bower_components/d3/d3.min.js web/htdocs/js/ 
-	ln -s bower_components/scrollmagic/scrollmagic/minified/ScrollMagic.min.js web/htdocs/js/
+links: rm_links 
+	echo 
+	ln -s ../../repos/Core/PAWS-mvc/htdocs/index.php web/htdocs/ 
+	ln -s ../repos/Core/PAWS-mvc/config.php web/
+	ln -s ../../repos/Core/PAWS-mvc/libs/smarty/ web/libs/
+	ln -s ../repos/Core/PAWS-mvc/outputs web/ 
+	ln -s ../../../bower_components/jquery/dist/jquery.min.js web/htdocs/js/
+	ln -s ../../../bower_components/queue-async/queue.min.js web/htdocs/js/
+	ln -s ../../../bower_components/d3/d3.min.js web/htdocs/js/ 
+	ln -s ../../../bower_components/scrollmagic/scrollmagic/minified/ScrollMagic.min.js web/htdocs/js/
+rm_links: 
+	find . -type l | xargs rm -rf 
 bower_init: 
 	$(WGET) $(BOWER_URL)
 	mv bowerphp.phar $(BOWER) 
