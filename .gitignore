@@ -6,3 +6,6 @@ web/htdocs/js/queue.min.js
 web/htdocs/js/ScrollMagic.min.js
 bower_components
 bowerphp
+data/raw/
+data/process/
+*.swp
