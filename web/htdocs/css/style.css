@@ -1,0 +1,104 @@
+html,body {
+	height: 100%;
+}
+#main_text {
+	padding-left: 5%;
+	padding-right: 5%;
+}
+.right {
+	text-align: right;
+}
+h1 {
+	font-family: 'Special Elite', cursive;
+	font-size: 2em;
+}
+.text_container {
+	background: rgba(255, 255, 255, .1);
+}
+p {
+	font-family: 'Open Sans Condensed', sans-serif;
+}
+span {
+	font-family: 'Roboto', sans-serif;
+}
+.boundary {
+	fill: #e6e6e6;
+	fill-opacity: 0.7;
+	stroke: #d3d3d3;
+}
+#chapters {
+	background: rgba(255, 255, 255, 0.5);
+}
+#chapters li, #chapters div{
+	font-size: 0.5em !important;
+}
+#chapters h3 {
+	font-size: 1.5em !important;
+}
+.blocks {
+	fill: black;
+}
+#movie, #main {
+}
+.scene {
+	/*
+	min-height: 200% !important;
+	margin-bottom: 15%;
+	*/
+	min-height: 350px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	border-bottom: 1px red solid;
+}
+
+#map .blocks {
+	fill-opacity: 1;
+}
+#map .line {
+	
+}
+#map .neighborhoods {
+	fill-opacity: 0;
+}
+#map .boundary {
+	fill: none;
+	stroke: black;
+}
+#map .counties {
+	stroke: #d3d3d3;
+	fill-opacity: 0;
+}
+#map .blockgroups {
+	fill: none;
+	stroke-width: 0.5;
+	stroke-dasharray: 5,2;
+	stroke: #969696;
+	stroke: gray;
+}
+#map .blockgroups text {
+	stroke: none;
+	font-size: 0.4em;
+}
+#map .blockgroups path:hover {
+	fill-opacity: 1;
+	stroke-width: 0.8;
+	stroke: white;
+}
+#map .boundaries {
+	stroke-width: 2;
+	fill: none;
+}
+#map .line {
+	stroke-width: 0.7;
+	stroke-dasharray: 5,5;
+	stroke: red;
+}
+.columns {
+}
+.highlight {
+	color: red;
+}
+.label { fill: black; stroke: white; }
+.poc.q0-4{fill:rgb(237,248,233)} .poc.q1-4{fill:rgb(186,228,179)} .poc.q2-4{fill:rgb(116,196,118)} .poc.q3-4{fill:rgb(35,139,69)}
+.white.q0-4{fill:rgb(242,240,247)} .white.q1-4{fill:rgb(203,201,226)} .white.q2-4{fill:rgb(158,154,200)} .white.q3-4{fill:rgb(106,81,163)}
+.black.q0-4{fill:rgb(239,243,255)} .black.q1-4{fill:rgb(189,215,231)} .black.q2-4{fill:rgb(107,174,214)} .black.q3-4{fill:rgb(33,113,181)}

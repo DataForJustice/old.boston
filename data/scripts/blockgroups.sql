@@ -8,11 +8,12 @@ FROM
 		(SELECT
 			'Feature' as type,
 			ST_AsGeoJson (self.geom)::json as geometry,
-			(WITH DATA (white, black, poc) AS ( VALUES (nh_white, nh_black + h_black, h_white + nh_other + h_other)) SELECT row_to_json (data) FROM data) as properties
+			(WITH DATA (gid, white, black, poc) AS ( VALUES (gid, nh_white, nh_black + h_black, h_white + nh_other + h_other)) SELECT row_to_json (data) FROM data) as properties
 		FROM
 
 			(SELECT 
 				distinct 
+				blockgroups.gid,
 				("P0020005") as nh_white, 
 				("P0020006") as nh_black, 
 				(("P0020007" + "P0020008" + "P0020009" + "P0020010" + "P0020011")) as nh_other, 

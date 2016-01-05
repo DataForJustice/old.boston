@@ -48,4 +48,4 @@ BEGIN
 
 END $$ LANGUAGE plpgsql;
 
-SELECT * FROM population_in_polygon((SELECT ST_Union (geom) as boston FROM ma_census_blocks WHERE realtown = 'Boston')) a; 
+--SELECT * FROM population_in_polygon((SELECT ST_Union (geom) as boston FROM ma_census_blocks WHERE realtown = 'Boston')) a; 

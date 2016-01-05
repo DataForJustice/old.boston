@@ -1,3 +1,10 @@
+export PGBIN=/usr/local/bin/
+export PGPORT=5432
+export PGHOST=localhost
+export PGUSER=paw
+export PGPASSWORD=""
+export PGDATABASE=aclum
+export TMPDIR=/tmp/
 WGET = wget
 GIT = git
 BOWER = ./bowerphp
@@ -6,9 +13,7 @@ ABSP = $(shell dirname .)
 WEB_DIR = web
 HTDOCS_DIR = htdocs
 DOCUMENT_ROOT = $(WEB_DIR)/$(HTDOCS_DIR)
-PSQL_USER = "paw"
-PSQL_DBNAME = "aclum"
-PSQL = psql -U $(PSQL_USER) -d $(PSQL_DBNAME)
+PSQL=$(PGBIN)psql -t
 repo_update:
 	$(GIT) stash
 	$(GIT) pull origin master
@@ -24,7 +29,12 @@ links: rm_links
 	ln -s ../../../bower_components/jquery/dist/jquery.min.js $(DOCUMENT_ROOT)/js/
 	ln -s ../../../bower_components/queue-async/queue.min.js $(DOCUMENT_ROOT)/js/
 	ln -s ../../../bower_components/d3/d3.min.js $(DOCUMENT_ROOT)/js/ 
+	ln -s ../../../bower_components/topojson/topojson.js $(DOCUMENT_ROOT)/js/ 
 	ln -s ../../../bower_components/scrollmagic/scrollmagic/minified/ScrollMagic.min.js $(DOCUMENT_ROOT)/js/
+	ln -s ../../../bower_components/scrollmagic/scrollmagic/minified/plugins/debug.addIndicators.min.js $(DOCUMENT_ROOT)/js/
+	ln -s ../../../bower_components/scrollmagic/scrollmagic/minified/plugins/animation.gsap.min.js $(DOCUMENT_ROOT)/js/
+	ln -s ../../../bower_components/gsap/src/minified/TweenMax.min.js $(DOCUMENT_ROOT)/js/
+
 rm_links: 
 	find . -type l | xargs rm -rf 
 bower_init: 
@@ -35,6 +45,8 @@ bower_init:
 	$(BOWER) install d3
 	$(BOWER) install queue-async 
 	$(BOWER) install scrollmagic
+	$(BOWER) install topojson
+	$(BOWER) install gsap
 bower_update:
 	find . -name bower.json -exec dirname {} \; | xargs -I {} $(BOWER) -d={} update
 #DATA INIT
@@ -54,7 +66,7 @@ data_init_ma_counties: data_dir
 	unzip data/raw/ma_counties.zip -d data/raw/ma_counties
 data_init_ma_census: data_dir
 	$(WGET) http://wsgw.mass.gov/data/gispub/shape/census2010/CENSUS2010_BLK_BG_TRCT_SHP.zip -O data/raw/ma_census.zip
-	unzip data/raw/ma_census.zip -d data/ma_census
+	unzip data/raw/ma_census.zip -d data/raw/ma_census
 data_init_ma_pl94171: data_dir
 	$(WGET) http://wsgw.mass.gov/data/gispub/shape/census2010/PL_94-171_TABLES_MDB.zip -O data/raw/pl94-171.zip
 	unzip data/raw/pl94-171.zip -d data/raw/pl94-171
@@ -91,13 +103,21 @@ clean_shapefiles:
 	rm -rf data/process/*.shp
 
 #downloads data and creates stored procedures, views and functions.
-data_init: data_dir data_init_ma_counties data_init_ma_census data_init_ma_pl94171 data_init_boston_osm data_init_us_zipcodes 
-	createdb -U $(PSQL_USER) $(PSQL_DBNAME)
-	$(PSQL) -c "CREATE EXTENSION postgis;"
+data_real_init: data_dir data_init_ma_counties data_init_ma_census data_init_ma_pl94171 data_init_boston_osm data_init_us_zipcodes data_init 
+data_init:
+	$(PSQL) -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+	$(PSQL) -c "CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder;"
 	$(PSQL) -f data/scripts/population_in_polygon.sql
+	$(PSQL) -c "SELECT loader_generate_nation_script('sh')" | sed 's/.$$//' | sed '/^$$/d' | sed -e's/[[:space:]]*$$//' | sed -e 's/\/gisdata/\$$\{TMPDIR\}/g' | sed '/.export/d' | sed '/.TMPDIR/d' | sed 's/^ *//;s/$$//' > data/scripts/tiger_nation.sh
+	$(PSQL) -c "SELECT loader_generate_script(ARRAY['MA'], 'sh') AS result" | sed 's/.$$//' | sed '/^$$/d' | sed -e's/[[:space:]]*$$//' | sed -e 's/\/gisdata/\$$\{TMPDIR\}/g' | sed '/.export/d' | sed '/.TMPDIR/d' | sed 's/^ *//;s/$$//' > data/scripts/tiger_ma.sh 
+	sh data/scripts/tiger_nation.sh
+	sh data/scripts/tiger_ma.sh
+
 #process data
 data_insert: clean_shapefiles data_process_ma_counties data_process_ma_census data_process_ma_pl94171 data_process_boston_osm data_process_us_zipcodes
 data_process:
 	$(PSQL) -f data/scripts/blockgroups.sql | topojson -q 1e4 -p -o web/htdocs/data/boston_blockgroups.json
+	$(PSQL) -f data/scripts/blockgroups_boundaries.sql | topojson -q 1e4 -p -o web/htdocs/data/boston_blockgroups_boundaries.json
+data: data_real_init data_init data_insert data_process
 update: repo_update bower_update links
 install: bower_init update 
