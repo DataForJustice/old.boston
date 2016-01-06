@@ -15,12 +15,10 @@ HTDOCS_DIR = htdocs
 DOCUMENT_ROOT = $(WEB_DIR)/$(HTDOCS_DIR)
 PSQL=$(PGBIN)psql -t
 repo_update:
-	$(GIT) stash
 	$(GIT) pull origin master
 	$(GIT) submodule update --init --recursive .
 	$(GIT) submodule foreach --recursive git pull origin master
 	$(GIT) submodule update --recursive
-	$(GIT) stash apply
 links: rm_links 
 	ln -s ../../repos/Core/PAWS-mvc/htdocs/index.php $(DOCUMENT_ROOT) 
 	ln -s ../repos/Core/PAWS-mvc/config.php $(WEB_DIR)/
