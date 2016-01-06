@@ -49,6 +49,7 @@ bower_update:
 	find . -name bower.json -exec dirname {} \; | xargs -I {} $(BOWER) -d={} update
 #DATA INIT
 data_dir: 
+	if [ ! -d "web/libs" ]; then  mkdir web/libs; fi
 	if [ ! -d "data/" ]; then  mkdir data; fi
 	if [ ! -d "data/process/" ]; then mkdir data/process; fi
 	if [ ! -d "data/raw" ]; then  mkdir data/raw; fi
@@ -104,6 +105,7 @@ clean_shapefiles:
 data_real_init: data_dir data_init_ma_counties data_init_ma_census data_init_ma_pl94171 data_init_boston_osm data_init_us_zipcodes data_init 
 data_init:
 	$(PSQL) -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+	$(PSQL) -c "CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;"
 	$(PSQL) -c "CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder;"
 	$(PSQL) -f data/scripts/population_in_polygon.sql
 	$(PSQL) -c "SELECT loader_generate_nation_script('sh')" | sed 's/.$$//' | sed '/^$$/d' | sed -e's/[[:space:]]*$$//' | sed -e 's/\/gisdata/\$$\{TMPDIR\}/g' | sed '/.export/d' | sed '/.TMPDIR/d' | sed 's/^ *//;s/$$//' > data/scripts/tiger_nation.sh
