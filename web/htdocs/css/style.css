@@ -82,8 +82,6 @@ span {
 }
 #map .blockgroups path:hover {
 	fill-opacity: 1;
-	stroke-width: 0.8;
-	stroke: white;
 }
 #map .boundaries {
 	stroke-width: 2;
@@ -106,7 +104,7 @@ span {
 .poc.q0-4{stroke:rgb(237,248,233); fill: rgb(237,248,233);} .poc.q1-4{stroke:rgb(186,228,179); fill: rgb(186,228,179)} .poc.q2-4{stroke:rgb(116,196,118); fill: rgb(116,196,118);} .poc.q3-4{stroke:rgb(35,139,69); fill: rgb(35,139,69);}
 .white.q0-4{stroke:rgb(242,240,247); fill: rgb(242,240,247);} .white.q1-4{stroke:rgb(203,201,226); fill: rgb(203,201,226);} .white.q2-4{stroke:rgb(158,154,200); fill:rgb(158,154,200);} .white.q3-4{stroke:rgb(106,81,163); fill: rgb(106,81,163);}
 .black.q0-4{stroke:rgb(239,243,255); fill:rgb(239,243,255);} .black.q1-4{stroke:rgb(189,215,231); fill:rgb(189,215,231);} .black.q2-4{stroke:rgb(107,174,214); fill:rgb(107,174,214);} .black.q3-4{stroke:rgb(33,113,181); fill:rgb(33,113,181);}
-.q0-3{stroke: yellow !important;} .q1-3{stroke: orange !important;} .q2-3{stroke:red !important;}
+.q0-3{fill-opacity: 0.2; } .q1-3{stroke: #FF9100 !important; fill-opacity: 0.5; } .q2-3{stroke:red !important; fill-opacity: 1;}
 .border {
 	stroke: gray !important;
 	stroke-width: 0.5px;

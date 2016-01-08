@@ -14,29 +14,29 @@ pre=""
 mdb-schema "${mdbfn}" postgres > "${tf}"
 
 # Schema file
-echo "BEGIN;\n" > "${schemafn}"
+echo "BEGIN;" > "${schemafn}"
 
 sp=""
-[ -n "${schema}" ] && echo "CREATE SCHEMA \"${schema}\";\n" >> "${schemafn}"
-[ -n "${schema}" ] && sp="SET search_path = \"${schema}\", pg_catalog;\n" 
+[ -n "${schema}" ] && echo "CREATE SCHEMA \"${schema}\";" >> "${schemafn}"
+[ -n "${schema}" ] && sp="SET search_path = \"${schema}\", pg_catalog;" 
 
 echo ${sp} >> "${schemafn}"
 
 awk '($0 !~ /^ALTER TABLE.*FOREIGN KEY.*REFERENCES/) {print;}' "${tf}" >> "${schemafn}"
 
-echo "\nEND;" >> "${schemafn}"
+echo "END;" >> "${schemafn}"
 
 # Foreign keys file
-echo "BEGIN;\n" > "${fkfn}"
+echo "BEGIN;" > "${fkfn}"
 echo ${sp} >> "${fkfn}"
 
 awk '($0 ~ /^ALTER TABLE.*FOREIGN KEY.*REFERENCES/) {print;}' "${tf}" >> "${fkfn}"
 
-echo "\nEND;" >> "${fkfn}"
+echo "END;" >> "${fkfn}"
 
 # Data file
-echo "BEGIN;\n" > "${datafn}"
-echo "SET CONSTRAINTS ALL DEFERRED;\n" >> "${datafn}"
+echo "BEGIN;" > "${datafn}"
+echo "SET CONSTRAINTS ALL DEFERRED;" >> "${datafn}"
 
 mdb-tables -1 "${mdbfn}" | while read TT
 do
@@ -46,7 +46,7 @@ do
 	'(NR==1) {gsub(/\t/,"\",\""); print "COPY " pre "\"" TT "\"(\"" $0 "\") FROM stdin;";}' "${tf}" >> "${datafn}"
     awk '(NR>1) {gsub(/\t\t/,"\t\\N\t"); gsub(/\t$/,"\t\\N"); gsub(/\t\t/,"\t\\N\t"); print;}' "${tf}" >> "${datafn}"
 
-    echo "\\.\n" >> "${datafn}"
+    echo "\\." >> "${datafn}"
 done
 
 echo "END;" >> "${datafn}"
