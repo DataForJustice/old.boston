@@ -118,6 +118,8 @@ data_insert: clean_shapefiles data_process_ma_counties data_process_ma_census da
 data_process:
 	$(PSQL) -f data/scripts/blockgroups.sql | topojson -q 1e4 -p -o web/htdocs/data/boston_blockgroups.json
 	$(PSQL) -f data/scripts/blockgroups_boundaries.sql | topojson -q 1e4 -p -o web/htdocs/data/boston_blockgroups_boundaries.json
+	$(PSQL) -f data/scripts/counties.sql | topojson -q 1e4 -p -o web/htdocs/data/ma_counties.json
+	$(PSQL) -f data/scripts/incidents.sql > web/htdocs/data/incidents.csv
 data: data_real_init data_init data_insert data_process
 update: repo_update bower_update links
 install: bower_init update 

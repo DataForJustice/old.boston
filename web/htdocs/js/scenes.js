@@ -80,14 +80,17 @@ Coordinator.prototype = {
 					$("li[data-section='" + section + "']").addClass ("highlight");
 					var txt = $("li[data-section='" + section + "']").first ().text ();
 					$(".text_container .section_name").text (txt);
+					/*
 					if (this.conf.labelers && this.conf.labelers [section]) {
 						labeler = this.conf.labelers [section];	
 					}
+					*/
 				}
 				var quantify = $(element).data ("quantify");
 				var quantifier = $(element).data ("quantifier");
 				var qArgs = $(element).data ("quantifier_args")
 				if (quantify && quantifier) {
+					labeler = this.conf.labelers [quantifier];
 					if (labeler && quantify == labeler.layer) {
 						this.quantify (quantify, {fn: quantifier, ar: qArgs}, {fn: labeler.labeler, ar: qArgs});
 					} else if (labeler) {
@@ -123,11 +126,11 @@ Coordinator.prototype = {
 		var l = this.conf.data [layer];
 		if (!q && quantifier) throw "No quantifier found: " + quantifier.fn;
 		if (!l) throw "No data found: " + layer;
-		var cb = function (fn) { return}
 
 		var lbl = labeler ? {fn: labeler.fn, context: this, args: labeler.ar} : null;
 		var qn = quantifier ? {fn: q, context: this, args: quantifier.ar} : null;
 		this.map.topologies [layer].redraw (this.setFeatureId (l), qn, lbl);
+		this.map.reZoom ();
 	},
 	setFeatureId: function (layer) {
 		return function (x) { 
@@ -231,16 +234,14 @@ $(document).ready (function () {
 	//$(this).foundation ();	
 	var conf = {
 		data: { 
-			/*
 			counties: {
 				type: d3.json, 
-				url: "/data/shapes/counties.json", 
+				url: "/data/ma_counties.json", 
 				id: "counties",
-				key: "ma_counties",
+				key: "stdin",
 				enumerator: "geometries",
-				idProperty: "FIPS_ID"
+				idProperty: "id"
 			},
-			*/
 			blockgroups: {
 				type: d3.json, 
 				url: "/data/boston_blockgroups.json", 
@@ -302,8 +303,7 @@ $(document).ready (function () {
 			}
 		},
 		map: {
-			//layers: [ "counties", "blockgroups", "boundaries" ],
-			layers: [ "blockgroups", "boundaries" ],
+			layers: [ "counties", "blockgroups", "boundaries" ],
 			center: {lat:42.319834, lon:-71.087294}
 		},
 		prequantifiers: {
@@ -333,24 +333,29 @@ $(document).ready (function () {
 			}
 		},
 		quantifiers: {
+			counties: function (a) { return "county"; },
 			incidents: function (a, args) {
 				var x = a.properties;
-				console.log (args);
 				if  (this.data.incidents.filtered [args.desc]) { 
+					var data = this.data.incidents.filtered [args.desc] [x.gid];
+					var d = null;
+					if (x.white > x.black && x.white > x.poc) d = "white";
+					if (x.black > x.white && x.black > x.poc) d = "black";
+					if (x.poc > x.black && x.poc > x.white) d = "poc";
+					var total = x.white + x.black + x.poc;
+					var qr = d3.scale.quantize ().domain ([0, 100]).range (d3.range (4).map (function (i) { return i; }));
 					if (this.data.incidents.filtered [args.desc] [x.gid]) {
-						var data = this.data.incidents.filtered [args.desc] [x.gid];
 						if (data.length > 0) {
-							var d = null;
-							if (x.white > x.black && x.white > x.poc) d = "white";
-							if (x.black > x.white && x.black > x.poc) d = "black";
-							if (x.poc > x.black && x.poc > x.white) d = "poc";
-							var q = d3.scale.quantile ().domain ([0, 3]).range (d3.range (4).map (function (i) { return i; }));
+							var q = d3.scale.quantile ().domain ([0, 3]).range (d3.range (3).map (function (i) { return i; }));
 							var ranks = [];
 							data.forEach (function (d) { ranks [ranks.length] = d.rank; });
-							var r = d + " q" + q (d3.mean (ranks)) + "-4";	
+							var r = d + " q" + qr ((x [d] * 100) / total) + "-4 q" + q (d3.mean (ranks)) + "-3" 
 							return r;
 						}
 					}
+					return d + " border";
+					return d + " q" + qr ((x [d] * 100) / total) + "-4 fill";
+
 				}
 			},
 			arrests: function (a, crime) { 
@@ -361,10 +366,12 @@ $(document).ready (function () {
 					if (x.white > x.black && x.white > x.poc) d = "white";
 					if (x.black > x.white && x.black > x.poc) d = "black";
 					if (x.poc > x.black && x.poc > x.white) d = "poc";
+					var total = x.white + x.black + x.poc;
 					var cnt = this.data.arrests.blockgroups [x.gid] [crime] ? this.data.arrests.blockgroups [x.gid] [crime] : 0;
-					var q = d3.scale.quantile ().domain ([0, 1]).range (d3.range (4).map (function (i) { return i; }));
+					var qr = d3.scale.quantize ().domain ([0, 100]).range (d3.range (4).map (function (i) { return i; }));
+					var q = d3.scale.quantile ().domain ([0, 1]).range (d3.range (3).map (function (i) { return i; }));
 
-					return d + " q" + q ((cnt / total) * 100) + "-4"; 
+					return d + " q" + qr ((x[d] / total) * 100) + "-4 q" + q((cnt /total) * 100) + "-3 border"; 
 				}
 			},
 			delta_white: function (a) { 
@@ -386,33 +393,23 @@ $(document).ready (function () {
 				var q = d3.scale.quantize ().domain ([0, 100]).range (d3.range (4).map (function (i) { return i; }));
 				if (d != null) {
 
-					return d + " q" + q ((x [d] * 100) / total) + "-4";
+					return d + " q" + q ((x [d] * 100) / total) + "-4 border";
 				}
 			},
-			whiteness: function (a) {
+			race: function (a, r) {
+				var race = r.race;
 				var x = a.properties;
 				var total = x.white + x.black + x.poc;
 				var q = d3.scale.quantize ().domain ([0, 100]).range (d3.range (4).map (function (i) { return i; }));
-				return "white q" + q ((x.white * 100) / total) + "-4"; 
-			},
-			blackness: function (a) {
-				var x = a.properties;
-				var total = x.white + x.black + x.poc;
-				var q = d3.scale.quantize ().domain ([0, 100]).range (d3.range (4).map (function (i) { return i; }));
-				return "black q" + q ((x.black * 100) / total) + "-4"; 
-			},
-			poc: function (a) { 
-				var x = a.properties;
-				var total = x.white + x.black + x.poc;
-				var q = d3.scale.quantize ().domain ([0, 100]).range (d3.range (4).map (function (i) { return i;}));
-				return "poc q" + q ((x.poc * 100) / total) + "-4";
+
+				return race + " q" + q ((x [race] * 100) / total) + "-4 border";
 			}
 		}, 
 		labelers: {
 			whiteness: {
 				layer: "blockgroups", 
 				labeler: function (a) { 
-					var x = a.properties; 
+					var x = a.properties;
 					var total = x.white + x.black + x.poc;
 					return Math.floor ((x.white * 100) / total) + "%"; 
 				} 
@@ -424,7 +421,8 @@ $(document).ready (function () {
 					var total = x.white + x.black + x.poc;
 					return Math.floor ((x.black * 100) / total) + "%"; 
 				} 
-			}
+			},
+
 		},
 	};
 

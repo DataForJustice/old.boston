@@ -66,10 +66,19 @@ home.map = function (container, width, height) {
 			.attr ("d", function (x) { return path(arc (x)); })
 			.attr ("vector-effect", "non-scaling-stroke")
 			.style ({'stroke-width': 1, 'stroke': '#B10000', 'stroke-linejoin': 'round', 'fill': 'none'})
-	}
+	},
+	this.zoomSelector = null,
+	this.zoomContext = null,
+	this.reZoom = function () {
+		if (this.zoomSelector != null) {
+			this.zoomTo (this.zoomSelector, this.zoomContext);
+		}
+	},
 	this.zoomTo = function (selector, context) {
 		if (!context) context = 20;
 		var e = d3.select (selector);
+		this.zoomSelector = selector;
+		this.zoomContext = context;
 		var path = this.getPath ();
 		var width = this.width;
 		var height = this.height;
@@ -83,14 +92,14 @@ home.map = function (container, width, height) {
 
 		this.svg
 			.selectAll ("path")
-			.transition ()
-			.duration (350)
+			//.transition ()
+			//.duration (350)
 			.attr ("transform", "translate(" + translate + ")scale(" + scale + ")");
 
 		this.svg
 			.selectAll ("text")
-			//.attr ("x", function (d) { return path.centroid (d)[0]; })
-			//.attr ("y", function (d) { return path.centroid (d)[1]; })
+			.attr ("x", function (d) { return path.centroid (d)[0]; })
+			.attr ("y", function (d) { return path.centroid (d)[1]; })
 			.attr ("transform", "translate(" + translate + ")scale(" + scale + ")")
 	}
 	this.addFeatures = function (topo, collection, key, quantifier) {
@@ -123,6 +132,7 @@ home.map.topology = function (cont, name, path, t, f) {
 	this.redraw = function (setId, quantifier, labeler) {
 		var path = this.path;
 		var qn = quantifier ? $.proxy (function (a) { return quantifier.fn.apply (quantifier.context, [a, quantifier.args]) }, quantifier) : null;
+		var lb = labeler ? $.proxy (function (a) { return labeler.fn.apply (labeler.context, [a, labeler.args]) }, labeler) : null;
 		this.container.select ("g." + this.name).selectAll ("path")
 			.data (topojson.feature (this.topology, this.features).features)
 			.attr ("d", function (x) { return path (x); })
@@ -133,24 +143,23 @@ home.map.topology = function (cont, name, path, t, f) {
 			.on ("click", this.createCallback (this._click))
 			.on ("mouseover", this.createCallback (this._mouseover))
 			.on ("mouseout", this.createCallback (this._mouseout));
-		/*
-		if (labeler) {	
+		if (lb) {	
 			this.container.select ("g." + this.name).selectAll ("text")
 				.data (topojson.feature (this.topology, this.features).features)
-				.text ($.proxy (labeler.fn, labeler.context, labeler.ar))
+				.text (lb)
 				.attr ("x", function (d) { return path.centroid (d)[0]; })
 				.attr ("y", function (d) { return path.centroid (d)[1]; })
 				.attr ("class", "label")
 				.enter ()
 				.append ("svg:text")
+				.data (topojson.feature (this.topology, this.features).features)
+				.text (lb)
 				.attr ("x", function (d) { return path.centroid (d)[0]; })
 				.attr ("y", function (d) { return path.centroid (d)[1]; })
 				.attr ("class", "label")
-				.text (labeler)
 		} else {
-			this.container.select ("g." + this.name).selectAll ("text").attr ("class", "");
+			this.container.select ("g." + this.name).selectAll ("text").remove ();
 		}
-		*/
 	}
 	this.createCallback = function (cb) {
 		var me = this;
