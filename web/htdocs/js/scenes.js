@@ -348,11 +348,15 @@ $(document).ready (function () {
 						n = n.key (function (r) {  return r [key]; }); 
 					});
 				}
-				var total = [];
-				n = n.rollup (function (l) { var t = d3.sum (l, function (r) { return r.count }); total.push (t); return t;});
+				var counts  = [];
+				n = n.rollup (function (l) { var t = d3.sum (l, function (r) { return r.count }); counts.push (t); return t;});
 				n = n.map (this.data.fios);
 				this.data.fios_nest = n;
-				this.data.fios_nest.total = d3.sum (total);
+				this.data.fios_nest.total = d3.sum (counts);
+				this.data.fios_nest.mean = d3.mean (counts);
+				this.data.fios_nest.min = d3.min (counts);
+				this.data.fios_nest.max = d3.max (counts);
+
 			}
 		},
 		quantifiers: {
@@ -384,7 +388,7 @@ $(document).ready (function () {
 				var name = x.name.toLowerCase ().replace (' ', '_').replace ('/', '_');
 				if (this.data.fios_nest [name]) {
 					console.log (this.data.fios_nest);
-					var qr = d3.scale.quantize ().domain ([0, 100]).range (d3.range (4).map (function (i) { return i; }));
+					var qr = d3.scale.quantize ().domain ([this.data.fios_nest.min, this.data.fios_nest.max]).range (d3.range (4).map (function (i) { return i; }));
 					if (args) {
 						//TODO: make this dynamic so I dont have to write every case... 
 						if (args.year && args.race) {
