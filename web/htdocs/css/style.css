@@ -39,16 +39,19 @@ span {
 	fill: black;
 }
 #movie, #main {
+	background-color: rgba(255,255,255,0.9);
 }
 .scene {
-	/*
-	min-height: 200% !important;
-	margin-bottom: 15%;
-	*/
 	min-height: 350px;
+	padding: 10px;
 	padding-top: 20px;
 	padding-bottom: 20px;
-	border-bottom: 1px red solid;
+	margin-right: 5px;
+}
+.scene.highlight {
+	background-color: #FAFAFA;
+	border: 1px solid black;
+
 }
 
 #map .blocks {
@@ -57,9 +60,6 @@ span {
 #map .line {
 	
 }
-#map .neighborhoods {
-	fill-opacity: 0;
-}
 #map .boundary {
 	fill: none;
 	stroke: black;
@@ -67,18 +67,17 @@ span {
 #map .counties {
 	stroke: #d3d3d3;
 }
-#map .counties .county {
+#map .counties {
 	fill: #FAFAFA; 
 }
-.label { fill: black; stroke: white; }
+.label { fill: #000; }
 #map .counties .label {
 	font-size: 35px;
-	fill: red !important;
 	fill-opacity: 1;
 }
 #map .blockgroups text {
-	stroke: none;
 	font-size: 0.4em;
+	stroke: none !important;
 }
 #map .blockgroups path:hover {
 	fill-opacity: 1;
@@ -90,24 +89,39 @@ span {
 #map .line {
 	stroke-width: 0.7;
 	stroke-dasharray: 5,5;
-	stroke: red;
 }
 .columns {
-}
-.highlight {
-	color: red;
 }
 #map .blockgroups {
 	fill: #F7F7F7;
 	stroke-width: 1.5px;
+
+}
+.neighborhoods path {
+	stroke: black;
+	stroke-width: 3px;
+	fill: none;
+}
+.neighbhorhoods text {
+	fill: white !important;
+}
+.neighborhoods text.increase {
+	fill: red;		
+	font-size: 20px;
+}
+.neighborhoods text.decrease {
+	fill: black;
+	font-size: 15px;
 }
 .poc.q0-4{stroke:rgb(237,248,233); fill: rgb(237,248,233);} .poc.q1-4{stroke:rgb(186,228,179); fill: rgb(186,228,179)} .poc.q2-4{stroke:rgb(116,196,118); fill: rgb(116,196,118);} .poc.q3-4{stroke:rgb(35,139,69); fill: rgb(35,139,69);}
 .white.q0-4{stroke:rgb(242,240,247); fill: rgb(242,240,247);} .white.q1-4{stroke:rgb(203,201,226); fill: rgb(203,201,226);} .white.q2-4{stroke:rgb(158,154,200); fill:rgb(158,154,200);} .white.q3-4{stroke:rgb(106,81,163); fill: rgb(106,81,163);}
 .black.q0-4{stroke:rgb(239,243,255); fill:rgb(239,243,255);} .black.q1-4{stroke:rgb(189,215,231); fill:rgb(189,215,231);} .black.q2-4{stroke:rgb(107,174,214); fill:rgb(107,174,214);} .black.q3-4{stroke:rgb(33,113,181); fill:rgb(33,113,181);}
-.q0-3{fill-opacity: 0.2; } .q1-3{stroke: #FF9100 !important; fill-opacity: 0.5; } .q2-3{stroke:red !important; fill-opacity: 1;}
+path.aq0-4{fill:rgb(255,255,178) !important; } path.aq1-4{fill:rgb(254,204,92) !important; } path.aq2-4{fill:rgb(253,141,60) !important;} path.aq3-4{fill:rgb(227,26,28) !important;}
+.dq0-3{ stroke: #fdd8a8 !important; stroke-width: 3px;} .dq1-3{stroke: #FF9100 !important; stroke-width: 3px; } .dq2-3{stroke:red !important; stroke-width: 3px;}
 .border {
-	stroke: gray !important;
+	/*stroke: gray !important;
 	stroke-width: 0.5px;
+	*/
 }
 .fill {
 	fill: #f7f7f7 !important;

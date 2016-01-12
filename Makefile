@@ -56,7 +56,8 @@ data_dir:
 	if [ ! -d "data/raw/ma_counties" ]; then  mkdir data/raw/ma_counties; fi
 	if [ ! -d "data/raw/ma_census" ]; then  mkdir data/raw/ma_census; fi
 	if [ ! -d "data/raw/boston_boundary" ]; then  mkdir data/raw/boston_boundary; fi
-	if [ ! -d "data/raw/boston_osm" ]; then  mkdir data/raw/boston_precincts; fi
+	if [ ! -d "data/raw/boston_osm" ]; then  mkdir data/raw/boston_osm; fi
+	if [ ! -d "data/raw/boston_neighborhoods" ]; then  mkdir data/raw/boston_neighborhoods; fi
 	if [ ! -d "data/raw/pl94-171" ]; then  mkdir data/raw/pl94-171; fi
 	if [ ! -d "data/raw/zipcodes" ]; then  mkdir data/raw/zipcodes; fi
 	if [ ! -d "web/htdocs/data/" ]; then  mkdir web/htdocs/data; fi
@@ -72,6 +73,10 @@ data_init_ma_pl94171: data_dir
 data_init_boston_osm: data_dir
 	$(WGET) https://s3.amazonaws.com/metro-extracts.mapzen.com/boston_massachusetts.imposm-shapefiles.zip -O data/raw/boston_osm.zip
 	unzip data/raw/boston_osm.zip -d data/raw/boston_osm
+data_init_boston_neighborhoods: data_dir
+	$(WGET) "https://data.cityofboston.gov/api/geospatial/mcme-sgsz?method=export&format=Shapefile" -O data/raw/boston_neighborhoods.zip
+	unzip data/raw/boston_neighborhoods.zip -d data/raw/boston_neighborhoods 
+		
 data_init_us_zipcodes: data_dir
 	$(WGET) http://www2.census.gov/geo/tiger/GENZ2014/shp/cb_2014_us_zcta510_500k.zip -O data/raw/zipcodes.zip
 	unzip data/raw/zipcodes.zip -d data/raw/zipcodes 
@@ -95,6 +100,8 @@ data_process_ma_pl94171:
 	$(PSQL) -f data/process/pl94-171.blkgrps.data.sql
 data_process_boston_osm: 
 	shp2pgsql -I -s 4326 -d data/raw/boston_osm/boston_massachusetts_osm_roads.shp public.boston_roads | $(PSQL)	
+data_process_boston_neighborhoods:
+	for i in `ls data/raw/boston_neighborhoods/*.shp`; do shp2pgsql -I -s 4326 -d $$i boston_neighborhoods | $(PSQL); done; 
 data_process_us_zipcodes:
 	ogr2ogr -s_srs EPSG:4269 -t_srs EPSG:4326 data/process/zipcodes.shp data/raw/zipcodes/cb_2014_us_zcta510_500k.shp
 	shp2pgsql -I -s 4326 -d data/process/zipcodes.shp us_zipcodes | $(PSQL)
@@ -102,7 +109,7 @@ clean_shapefiles:
 	rm -rf data/process/*.shp
 
 #downloads data and creates stored procedures, views and functions.
-data_real_init: data_dir data_init_ma_counties data_init_ma_census data_init_ma_pl94171 data_init_boston_osm data_init_us_zipcodes data_init 
+data_real_init: data_dir data_init_ma_counties data_init_ma_census data_init_ma_pl94171 data_init_boston_osm data_init_boston_neighborhoods data_init_us_zipcodes data_init 
 data_init:
 	$(PSQL) -c "CREATE EXTENSION IF NOT EXISTS postgis;"
 	$(PSQL) -c "CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;"

@@ -57,61 +57,39 @@ Coordinator.prototype = {
 		}
 		*/
 	},
-	scrollLeave: function (scene) {
+	parseElement: function (element) {
+	      var clear = $(element).data ("clear");
+	      if (clear) {
+		      var layers = clear.split(',');
+		      for (var l in layers) {
+			      this.quantify (layers [l.trim()]);
+		      }
+	      }
+	      var quantify = $(element).data ("quantify");
+	      var quantifier = $(element).data ("quantifier");
+	      var qArgs = $(element).data ("quantifier_args")
+		      if (quantify && quantifier) {
+			      this.quantify (quantify, {fn: quantifier, ar: qArgs});
+		      }
+	      var zoomTo = $(element).data ("zoom_to");
+	      var zoomLevel = $(element).data ("zoom_level"); 
+	      var zoomTo = $(element).data("zoom_to"); 
+	      var zoomLevel = $(element).data ("zoom_level");
+	      if (zoomTo) {
+		      this.map.zoomTo ("#" + zoomTo, zoomLevel);
+	      }
+	},
+	scrollLeave: function (element) {
+		this.currentElement = null; 
+	},
+	scrollProgress: function (element) {
+		if (element.id == this.currentElement) {
+		}
 	},
 	scrollEnter: function (element) {
-		$(element).siblings ().removeClass ("highlight");
+		$(element.parentNode).children ().removeClass ("highlight");
 		$(element).addClass ("highlight");
-		if (element && element.id) {
-			if (element.id != this.currentElement) {
-				var clear = $(element).data ("clear");
-				if (clear) {
-					var layers = clear.split(',');
-					for (var l in layers) {
-						this.quantify (layers [l.trim()]);
-					}
-				}
-				var section = $(element).data ("section");
-				$(".text_container").children ("[data-section]").hide ();
-				$("li[data-section]").removeClass ("highlight");
-				var labeler;
-				if (section) {
-					$(".text_container").children ("[data-section='" + section + "']").show ();
-					$("li[data-section='" + section + "']").addClass ("highlight");
-					var txt = $("li[data-section='" + section + "']").first ().text ();
-					$(".text_container .section_name").text (txt);
-					/*
-					if (this.conf.labelers && this.conf.labelers [section]) {
-						labeler = this.conf.labelers [section];	
-					}
-					*/
-				}
-				var quantify = $(element).data ("quantify");
-				var quantifier = $(element).data ("quantifier");
-				var qArgs = $(element).data ("quantifier_args")
-				if (quantify && quantifier) {
-					labeler = this.conf.labelers [quantifier];
-					if (labeler && quantify == labeler.layer) {
-						this.quantify (quantify, {fn: quantifier, ar: qArgs}, {fn: labeler.labeler, ar: qArgs});
-					} else if (labeler) {
-						this.quantify (labeler.layer, {fn: quantifier, ar: qArgs}, {fn: labeler.labeler, ar: qArgs});
-					} else {
-						this.quantify (quantify, {fn: quantifier, ar: qArgs});
-					}
-				}
-				var zoomTo = $(element).data ("zoom_to");
-				var zoomLevel = $(element).data ("zoom_level"); 
-				if (!zoomTo) {
-					zoomTo = $(element).prev ().data ("zoom_to"); 
-					zoomLevel = $(element).prev ().data ("zoom_level");
-				}
-				if (zoomTo) {
-					this.map.zoomTo ("#" + zoomTo, zoomLevel);
-				}
-
-				this.currentElement = element.id;
-			}
-		}
+		this.parseElement (element);
 	},
 	quantify: function (layer, quantifier, labeler) {
 		if (this.conf.prequantifiers) {
@@ -129,6 +107,7 @@ Coordinator.prototype = {
 
 		var lbl = labeler ? {fn: labeler.fn, context: this, args: labeler.ar} : null;
 		var qn = quantifier ? {fn: q, context: this, args: quantifier.ar} : null;
+		if (!this.map.topologies[layer]) throw "No layer: "+layer;
 		this.map.topologies [layer].redraw (this.setFeatureId (l), qn, lbl);
 		this.map.reZoom ();
 	},
@@ -142,14 +121,23 @@ Coordinator.prototype = {
 		};
 	},
 	initControls: function () {
+		$("form[data-control]").change({me: this},
+			function (a) {
+				var args = {};
+				$.each ($(this).find (":input").serializeArray (), function (_, kv) { if (kv.value != "IGNORE") { args [kv.name] = kv.value; } });
+				$(this).data ("quantifier_args", args);
+				a.data.me.parseElement.apply (a.data.me, [this]);
+			}
+		);
+		$("select[data-control]").change ({me: this},
+			function (a) {
+				a.data.me.parseElement.apply (a.data.me, [$(this).children (":selected")]);
+			}
+		)
 		$("a[data-control]").click ({me: this}, 
 			function (a) { 
 				var x = a.data.me;
-				var zoomTo = $(this).data("zoom_to"); 
-				var zoomLevel = $(this).data ("zoom_level");
-				if (zoomTo) {
-					x.map.zoomTo ("#" + zoomTo, zoomLevel);
-				}
+				x.parseElement.apply (x, [this]);
 			}
 		);
 	},
@@ -203,8 +191,10 @@ Scenify.prototype = {
 		return this;
 	},
 	progressCallback: function (ev) { 
-		var elm = ev.target.triggerElement ();
-		this.trigger ("scene_progress", [elm]);
+		if (ev.type == "progress") {
+			var elm = ev.target.triggerElement ();
+			this.trigger ("scene_progress", [elm]);
+		}
 	},
 	enterCallback: function (ev) { 
 		var elm = ev.target.triggerElement ();
@@ -265,6 +255,19 @@ $(document).ready (function () {
 				},
 				enumerator: "geometries"
 			}, 
+			fios: {
+				type: d3.csv,
+				url: "data/fios_by_neighborhood.csv",
+				id: "fios",
+			},
+			neighborhoods: {
+				type: d3.json,
+				url: "/data/neighborhoods.json",
+				id: "neighborhoods",
+				key: "stdin",
+				idProperty: function (d) { return d.properties.name.replace ('/', ' ').replace(' ', '_').toLowerCase (); },
+				enumerator: "geometries"
+			},
 			boundaries: {
 				type: d3.json, 
 				url: "/data/boston_blockgroups_boundaries.json", 
@@ -273,6 +276,7 @@ $(document).ready (function () {
 				enumerator: "geometries",
 				idProperty: function (x) { return x.properties.a_gid + "_" + x.properties.b_gid; },
 			},
+			/*
 			incidents: {
 				type: d3.csv,
 				id: "incidents",
@@ -301,9 +305,10 @@ $(document).ready (function () {
 				},
 				url: "/data/arrests.csv"
 			}
+			*/
 		},
 		map: {
-			layers: [ "counties", "blockgroups", "boundaries" ],
+			layers: [ "counties", "blockgroups", "neighborhoods" ],
 			center: {lat:42.319834, lon:-71.087294}
 		},
 		prequantifiers: {
@@ -330,6 +335,24 @@ $(document).ready (function () {
 					});
 					this.data.incidents.filtered = data;
 				}
+			},
+			fios: function (args) {
+				var n = d3.nest ();
+				n = n.key (function (r) {  return r.neighborhood.toLowerCase ().replace (' ', '_').replace ('/', '_'); });
+				if (args) {
+					var keys = [];
+					for (x in args) {
+						keys [keys.length] = x;
+					}
+					keys.forEach (function (key) {
+						n = n.key (function (r) {  return r [key]; }); 
+					});
+				}
+				var total = [];
+				n = n.rollup (function (l) { var t = d3.sum (l, function (r) { return r.count }); total.push (t); return t;});
+				n = n.map (this.data.fios);
+				this.data.fios_nest = n;
+				this.data.fios_nest.total = d3.sum (total);
 			}
 		},
 		quantifiers: {
@@ -349,14 +372,39 @@ $(document).ready (function () {
 							var q = d3.scale.quantile ().domain ([0, 3]).range (d3.range (3).map (function (i) { return i; }));
 							var ranks = [];
 							data.forEach (function (d) { ranks [ranks.length] = d.rank; });
-							var r = d + " q" + qr ((x [d] * 100) / total) + "-4 q" + q (d3.mean (ranks)) + "-3" 
-							return r;
+							var r = d + " q" + qr ((x [d] * 100) / total) + "-4 dq" + q (d3.mean (ranks)) + "-3"; 
+							return {"class": r, "text": Math.round (d3.mean (ranks))};
 						}
 					}
-					return d + " border";
-					return d + " q" + qr ((x [d] * 100) / total) + "-4 fill";
-
+					return {"class": d + " border"};
 				}
+			},
+			fios: function (nb, args) {
+				var x = nb.properties;
+				var name = x.name.toLowerCase ().replace (' ', '_').replace ('/', '_');
+				if (this.data.fios_nest [name]) {
+					console.log (this.data.fios_nest);
+					var qr = d3.scale.quantize ().domain ([0, 100]).range (d3.range (4).map (function (i) { return i; }));
+					if (args) {
+						//TODO: make this dynamic so I dont have to write every case... 
+						if (args.year && args.race) {
+							var cnt = this.data.fios_nest [name] [args.year] [args.race];
+							return {"class": "aq" + qr (cnt) + "-4", "text": cnt};
+						}
+						if (args.year) {
+							var inc = this.data.fios_nest [name] [args.year] > this.data.fios_nest [name] [args.year - 1];
+							var cnt = this.data.fios_nest [name] [args.year];
+							return {"class": (inc ? "increase" : "decrease") + " aq" + qr (cnt) + "-4", "text": cnt};
+
+						}
+						if (args.race) {
+							var cnt = this.data.fios_nest [name] [args.race];
+							return {"class": "aq" + qr (cnt) + "-4", "text": cnt};
+						}
+					}
+					var cnt = this.data.fios_nest [name];
+					return {"class": "aq" + qr (cnt) + "-4", "text": cnt};
+				};
 			},
 			arrests: function (a, crime) { 
 				var x = a.properties;
@@ -374,15 +422,6 @@ $(document).ready (function () {
 					return d + " q" + qr ((x[d] / total) * 100) + "-4 q" + q((cnt /total) * 100) + "-3 border"; 
 				}
 			},
-			delta_white: function (a) { 
-				var x = a.properties;
-				var d = (x.a_white - x.b_white) * 100;
-				if (d > 0) {
-					//return "l13-4";
-					var q = d3.scale.quantile ().domain ([0, 15, 30]).range (d3.range (4).map (function (i) { return i; }));
-					return "l1" + q(d) + "-4";
-				}
-			},
 			racial: function (a) {
 				var x = a.properties;
 				var total = x.white + x.black + x.poc;
@@ -393,7 +432,7 @@ $(document).ready (function () {
 				var q = d3.scale.quantize ().domain ([0, 100]).range (d3.range (4).map (function (i) { return i; }));
 				if (d != null) {
 
-					return d + " q" + q ((x [d] * 100) / total) + "-4 border";
+					return {"class": d + " q" + q ((x [d] * 100) / total) + "-4 border"};
 				}
 			},
 			race: function (a, r) {
@@ -402,28 +441,10 @@ $(document).ready (function () {
 				var total = x.white + x.black + x.poc;
 				var q = d3.scale.quantize ().domain ([0, 100]).range (d3.range (4).map (function (i) { return i; }));
 
-				return race + " q" + q ((x [race] * 100) / total) + "-4 border";
+				var pct = (x [race] * 100) / total;
+				return { "class": race + " q" + q (pct)+ "-4 border", "text": Math.round (pct,1) + "%" };
 			}
-		}, 
-		labelers: {
-			whiteness: {
-				layer: "blockgroups", 
-				labeler: function (a) { 
-					var x = a.properties;
-					var total = x.white + x.black + x.poc;
-					return Math.floor ((x.white * 100) / total) + "%"; 
-				} 
-			}, 
-			blackness: {
-				layer: "blockgroups", 
-				labeler: function (a) { 
-					var x = a.properties; 
-					var total = x.white + x.black + x.poc;
-					return Math.floor ((x.black * 100) / total) + "%"; 
-				} 
-			},
-
-		},
+		}
 	};
 
 	var coord = new Coordinator (conf);

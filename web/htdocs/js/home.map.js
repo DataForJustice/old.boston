@@ -2,7 +2,7 @@ home = {};
 home.map = function (container, width, height) {
 	this.scale = 200000;
 	this.translate = [width / 2, height / 2];
-	this.refCenter = [.45, .4];
+	this.refCenter = [.37, .4];
 	this.translate = [width * this.refCenter [0], height * this.refCenter [1]]; 
 	this.center = 0;
 	this.width = width;
@@ -95,11 +95,10 @@ home.map = function (container, width, height) {
 			//.transition ()
 			//.duration (350)
 			.attr ("transform", "translate(" + translate + ")scale(" + scale + ")");
-
 		this.svg
 			.selectAll ("text")
-			.attr ("x", function (d) { return path.centroid (d)[0]; })
-			.attr ("y", function (d) { return path.centroid (d)[1]; })
+		//	.attr ("x", function (d) { return path.centroid (d)[0]; })
+		//	.attr ("y", function (d) { return path.centroid (d)[1]; })
 			.attr ("transform", "translate(" + translate + ")scale(" + scale + ")")
 	}
 	this.addFeatures = function (topo, collection, key, quantifier) {
@@ -127,39 +126,36 @@ home.map.topology = function (cont, name, path, t, f) {
 	this.name = name;
 	this.topology = t;
 	this.features = f;
-	this.quantize = d3.scale.quantize ().domain ([0, 100]).range (d3.range (9).map (function (i) { return "q" + i + "-9"}));
 	this.path = path;
-	this.redraw = function (setId, quantifier, labeler) {
+	this.redraw = function (setId, quantifier) {
 		var path = this.path;
-		var qn = quantifier ? $.proxy (function (a) { return quantifier.fn.apply (quantifier.context, [a, quantifier.args]) }, quantifier) : null;
-		var lb = labeler ? $.proxy (function (a) { return labeler.fn.apply (labeler.context, [a, labeler.args]) }, labeler) : null;
+		this.container.select ("g." + this.name).selectAll ("text").remove ();
+		var qn = quantifier ? $.proxy (
+				function (selector, d) {  
+					var attrs = quantifier.fn.apply (quantifier.context, [d, quantifier.args])
+					if (attrs && attrs.text) {
+						var xs = {"x": path.centroid (d)[0], "y": path.centroid (d)[1]};
+						d3.select (selector.parentNode)
+							.append ("svg:text")
+							.attr (xs)
+							.attr (attrs)
+							.text (attrs.text);
+					}
+					d3.select (selector).attr (attrs); 
+
+				},
+			quantifier) : function (selector, d) { d3.select (selector).attr ("class", ""); };
 		this.container.select ("g." + this.name).selectAll ("path")
 			.data (topojson.feature (this.topology, this.features).features)
+			.each (function (d) { qn (this, d); })
 			.attr ("d", function (x) { return path (x); })
-			.attr ("class", qn)
+			//.attr ("class", qn)
 			.attr ("id", setId)
 			.enter ()
 			.append ("path")
 			.on ("click", this.createCallback (this._click))
 			.on ("mouseover", this.createCallback (this._mouseover))
 			.on ("mouseout", this.createCallback (this._mouseout));
-		if (lb) {	
-			this.container.select ("g." + this.name).selectAll ("text")
-				.data (topojson.feature (this.topology, this.features).features)
-				.text (lb)
-				.attr ("x", function (d) { return path.centroid (d)[0]; })
-				.attr ("y", function (d) { return path.centroid (d)[1]; })
-				.attr ("class", "label")
-				.enter ()
-				.append ("svg:text")
-				.data (topojson.feature (this.topology, this.features).features)
-				.text (lb)
-				.attr ("x", function (d) { return path.centroid (d)[0]; })
-				.attr ("y", function (d) { return path.centroid (d)[1]; })
-				.attr ("class", "label")
-		} else {
-			this.container.select ("g." + this.name).selectAll ("text").remove ();
-		}
 	}
 	this.createCallback = function (cb) {
 		var me = this;

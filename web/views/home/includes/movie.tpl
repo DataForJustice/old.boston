@@ -1,9 +1,8 @@
 {assign var=basedir value='../views/home/includes/movie/'}
 {assign var=dirs value=$basedir|scandir }
-<div id="movie" style="position: absolute; top: 0; left: 70%; width: 30%; z-index: 95;">
+<div id="movie" style="position: absolute; top: 0; left: 55%; width: 45%; z-index: 95;">
 {foreach from=$dirs item=dir}
-	{if is_dir ("$basedir/$dir") && $dir != "." && $dir != ".."}
-		{$dir}<br>
+	{if is_dir ("$basedir/$dir") && $dir != "." && $dir != ".." && $dir.0 != "."}
 		{assign var=tpls value="$basedir/$dir"|scandir}
 		{foreach from=$tpls item=tpl}
 			{assign var=info value="$basedir/$dir/$tpl"|pathinfo}
