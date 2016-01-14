@@ -276,7 +276,6 @@ $(document).ready (function () {
 				enumerator: "geometries",
 				idProperty: function (x) { return x.properties.a_gid + "_" + x.properties.b_gid; },
 			},
-			/*
 			incidents: {
 				type: d3.csv,
 				id: "incidents",
@@ -290,6 +289,7 @@ $(document).ready (function () {
 					return n;
 				}
 			},
+			/*
 			arrests: {
 				type: d3.csv,
 				id: "arrests",
@@ -373,11 +373,12 @@ $(document).ready (function () {
 					var qr = d3.scale.quantize ().domain ([0, 100]).range (d3.range (4).map (function (i) { return i; }));
 					if (this.data.incidents.filtered [args.desc] [x.gid]) {
 						if (data.length > 0) {
-							var q = d3.scale.quantile ().domain ([0, 3]).range (d3.range (3).map (function (i) { return i; }));
+							var q = d3.scale.quantile ().domain ([0, 4]).range (d3.range (3).map (function (i) { return i; }));
 							var ranks = [];
 							data.forEach (function (d) { ranks [ranks.length] = d.rank; });
-							var r = d + " q" + qr ((x [d] * 100) / total) + "-4 dq" + q (d3.mean (ranks)) + "-3"; 
-							return {"class": r, "text": Math.round (d3.mean (ranks))};
+							//var r = d + " q" + qr ((x [d] * 100) / total) + "-4 dq" + q (d3.mean (ranks)) + "-3"; 
+							var r = d + " aq" + q (d3.mean (ranks)) + "-4";
+							return {"class": r, "text": Math.ceil (d3.mean (ranks)) + "σx̅"};
 						}
 					}
 					return {"class": d + " border"};

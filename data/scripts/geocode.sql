@@ -2,6 +2,7 @@
 	(SELECT addys.original, geo.* FROM addys, geocode (original || ', Boston MA', 1) as geo WHERE addys.rating IS NULL) 
 UPDATE addys SET addy = geocoded.addy, geom = ST_SetSRID (geocoded.geomout, 4326), rating = geocoded.rating FROM geocoded WHERE addys.original = geocoded.original ;
 */
+\set ON_ERROR_ROLLBACK
 DO
 $$
 DECLARE
@@ -29,9 +30,9 @@ BEGIN
 				addys.original ILIKE '% AT %'
 				AND (addys.addy).zip is not null AND addys.rating > 21 
 			) as x
-		--ORDER BY random()
-		ORDER BY rating  
-		LIMIT 800
+		ORDER BY random()
+		--ORDER BY rating  
+		LIMIT 100
 		)
 	LOOP
 		RAISE NOTICE 'ORIGINAL: %', m;
