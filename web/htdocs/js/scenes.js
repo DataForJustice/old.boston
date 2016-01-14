@@ -175,7 +175,7 @@ Scenify.prototype = {
 	constructor: Scenify,
 	init: function () {
 		$(this.selector).children ().each ($.proxy (function (index, child) {
-			var hook = 0.5;
+			var hook = 0.2;
 			var sceneElement = $(child);
 			var scene = new ScrollMagic.Scene ({triggerElement: child, tweenChanges: true, duration: "100%"})
 					.triggerHook (hook)

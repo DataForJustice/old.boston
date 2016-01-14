@@ -99,7 +99,7 @@ span {
 }
 .neighborhoods path {
 	stroke: black;
-	stroke-width: 3px;
+	stroke-width: 2px;
 	fill: none;
 }
 .neighbhorhoods text {
