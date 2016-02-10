@@ -13,7 +13,7 @@ ABSP = $(shell dirname .)
 WEB_DIR = web
 HTDOCS_DIR = htdocs
 DOCUMENT_ROOT = $(WEB_DIR)/$(HTDOCS_DIR)
-PSQL=$(PGBIN)psql -t
+PSQL=$(PGBIN)psql -q -t
 repo_update:
 	$(GIT) pull origin master
 	$(GIT) submodule update --init --recursive .
@@ -32,7 +32,8 @@ links: rm_links
 	ln -s ../../../bower_components/scrollmagic/scrollmagic/minified/plugins/debug.addIndicators.min.js $(DOCUMENT_ROOT)/js/
 	ln -s ../../../bower_components/scrollmagic/scrollmagic/minified/plugins/animation.gsap.min.js $(DOCUMENT_ROOT)/js/
 	ln -s ../../../bower_components/gsap/src/minified/TweenMax.min.js $(DOCUMENT_ROOT)/js/
-
+	ln -s ../../../bower_components/bootstrap/dist/js/bootstrap.min.js $(DOCUMENT_ROOT)/js/
+	ln -s ../../../bower_components/bootstrap/dist/css/bootstrap.min.css $(DOCUMENT_ROOT)/css/
 rm_links: 
 	find . -type l | xargs rm -rf 
 bower_init: 
@@ -45,6 +46,7 @@ bower_init:
 	$(BOWER) install scrollmagic
 	$(BOWER) install topojson
 	$(BOWER) install gsap
+	$(BOWER) install bootstrap
 bower_update:
 	find . -name bower.json -exec dirname {} \; | xargs -I {} $(BOWER) -d={} update
 #DATA INIT
@@ -60,6 +62,8 @@ data_dir:
 	if [ ! -d "data/raw/boston_neighborhoods" ]; then  mkdir data/raw/boston_neighborhoods; fi
 	if [ ! -d "data/raw/pl94-171" ]; then  mkdir data/raw/pl94-171; fi
 	if [ ! -d "data/raw/zipcodes" ]; then  mkdir data/raw/zipcodes; fi
+	if [ ! -d "data/raw/incidents" ]; then  mkdir data/raw/incidents; fi
+	if [ ! -d "data/raw/fios" ]; then  mkdir data/raw/fios; fi
 	if [ ! -d "web/htdocs/data/" ]; then  mkdir web/htdocs/data; fi
 data_init_ma_counties: data_dir
 	$(WGET) http://wsgw.mass.gov/data/gispub/shape/state/counties.zip -O data/raw/ma_counties.zip
@@ -80,6 +84,10 @@ data_init_boston_neighborhoods: data_dir
 data_init_us_zipcodes: data_dir
 	$(WGET) http://www2.census.gov/geo/tiger/GENZ2014/shp/cb_2014_us_zcta510_500k.zip -O data/raw/zipcodes.zip
 	unzip data/raw/zipcodes.zip -d data/raw/zipcodes 
+data_init_incidents: data_dir
+	$(WGET) https://data.cityofboston.gov/api/views/7cdf-6fgx/rows.csv?accessType=DOWNLOAD -O data/raw/incidents/incidents.csv 
+data_init_fios: data_dir
+	$(WGET) https://data.cityofboston.gov/api/views/xmmk-i78r/rows.csv?accessType=DOWNLOAD -O data/raw/fios/fios.csv
 #DATA PROCESSING
 data_process_ma_census: 
 	ogr2ogr -s_srs EPSG:26986 -t_srs EPSG:4326 data/process/ma_blocks.shp data/raw/ma_census/CENSUS2010BLOCKS_POLY.shp
@@ -127,6 +135,10 @@ data_process:
 	$(PSQL) -f data/scripts/blockgroups_boundaries.sql | topojson -q 1e4 -p -o web/htdocs/data/boston_blockgroups_boundaries.json
 	$(PSQL) -f data/scripts/counties.sql | topojson -q 1e4 -p -o web/htdocs/data/ma_counties.json
 	$(PSQL) -f data/scripts/incidents.sql > web/htdocs/data/incidents.csv
+	$(PSQL) -f data/scripts/fios_geom.sql 
+	$(PSQL) -f data/scripts/street_segments.sql | topojson -q 1e4 -o web/htdocs/data/streets.json
+	$(PSQL) -f data/scripts/grid.sql | topojson -q 1e4 -p -o web/htdocs/data/boston_grid.json
+	$(PSQL) -f data/scripts/fios_grid.sql > web/htdocs/data/fios_grid.csv
 data: data_real_init data_init data_insert data_process
 update: repo_update bower_update links
 install: bower_init update 

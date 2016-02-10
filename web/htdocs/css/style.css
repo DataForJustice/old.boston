@@ -1,33 +1,36 @@
 html,body {
+	width: 100%;
 	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+#intro_map .counties {
+	fill: none;
+	stroke: lightgray;
+}
+body {
+	background: url(/policebg.png) no-repeat left top fixed;
+	background-size: 100% 100%;
 }
 #main_text {
 	padding-left: 5%;
 	padding-right: 5%;
 }
+.streets path {
+	stroke-width: 1px;
+	fill: none;
+}
 .right {
 	text-align: right;
 }
 h1 {
-	font-family: 'Special Elite', cursive;
 	font-size: 2em;
-}
-.text_container {
-	background: rgba(255, 255, 255, .1);
-}
-p {
-	font-family: 'Open Sans Condensed', sans-serif;
-}
-span {
-	font-family: 'Roboto', sans-serif;
+	color: white;
 }
 .boundary {
 	fill: #e6e6e6;
 	fill-opacity: 0.7;
 	stroke: #d3d3d3;
-}
-#chapters {
-	background: rgba(255, 255, 255, 0.5);
 }
 #chapters li, #chapters div{
 	font-size: 0.5em !important;
@@ -38,19 +41,19 @@ span {
 .blocks {
 	fill: black;
 }
-#movie, #main {
-	background-color: rgba(255,255,255,0.9);
+#movie {
+	max-width: 1px !important;
+} 
+#main {
 }
 .scene {
-	min-height: 350px;
-	padding: 10px;
-	padding-top: 20px;
+	min-height: 90vh;
 	padding-bottom: 20px;
 	margin-right: 5px;
+	margin-bottom: 10vh;
 }
-.scene.highlight {
-	background-color: #FAFAFA;
-	border: 1px solid black;
+.scene.highlight h1 {
+	color: red;
 
 }
 
@@ -64,14 +67,12 @@ span {
 	fill: none;
 	stroke: black;
 }
-#map .counties {
+.counties {
+	fill: rgba(255,255,255,0.3);
 	stroke: #d3d3d3;
 }
-#map .counties {
-	fill: #FAFAFA; 
-}
 .label { fill: #000; }
-#map .counties .label {
+.counties .label {
 	font-size: 35px;
 	fill-opacity: 1;
 }
@@ -113,14 +114,27 @@ span {
 	fill: black;
 	font-size: 15px;
 }
+#mini_map {
+	border: 1px white solid;
+}
+#mini_map .neighborhoods path { 
+	fill: white !important;
+}
+#mini_map .counties path { 
+	fill: lightgray !important;
+}
+/*
 .poc.q0-4{stroke:rgb(237,248,233); fill: rgb(237,248,233);} .poc.q1-4{stroke:rgb(186,228,179); fill: rgb(186,228,179)} .poc.q2-4{stroke:rgb(116,196,118); fill: rgb(116,196,118);} .poc.q3-4{stroke:rgb(35,139,69); fill: rgb(35,139,69);}
 .white.q0-4{stroke:rgb(242,240,247); fill: rgb(242,240,247);} .white.q1-4{stroke:rgb(203,201,226); fill: rgb(203,201,226);} .white.q2-4{stroke:rgb(158,154,200); fill:rgb(158,154,200);} .white.q3-4{stroke:rgb(106,81,163); fill: rgb(106,81,163);}
 .black.q0-4{stroke:rgb(239,243,255); fill:rgb(239,243,255);} .black.q1-4{stroke:rgb(189,215,231); fill:rgb(189,215,231);} .black.q2-4{stroke:rgb(107,174,214); fill:rgb(107,174,214);} .black.q3-4{stroke:rgb(33,113,181); fill:rgb(33,113,181);}
-path.aq0-4{fill:rgb(255,255,178) !important; } path.aq1-4{fill:rgb(254,204,92) !important; } path.aq2-4{fill:rgb(253,141,60) !important;} path.aq3-4{fill:rgb(227,26,28) !important;}
+*/
+.q0-4{fill:rgb(247,247,247)} .q1-4{fill:rgb(204,204,204)} .q2-4{fill:rgb(150,150,150)} .q3-4{fill:rgb(82,82,82)}
+.aq0-4{fill:rgb(255,255,178) !important; } .aq1-4{fill:rgb(254,204,92) !important; } .aq2-4{fill:rgb(253,141,60) !important;} .aq3-4{fill:rgb(227,26,28) !important;}
+path.lq0-4{stroke:rgb(255,255,178) !important; } path.lq1-4{stroke:rgb(254,204,92) !important; } path.lq2-4{stroke:rgb(253,141,60) !important;} path.lq3-4{stroke:rgb(227,26,28) !important;}
 text.aq0-4{fill:black !important; } text.aq1-4{fill:black !important; } text.aq2-4{fill:black !important;} text.aq3-4{fill:black !important;}
 .dq0-3{ stroke: #fdd8a8 !important; stroke-width: 3px;} .dq1-3{stroke: #FF9100 !important; stroke-width: 3px; } .dq2-3{stroke:red !important; stroke-width: 3px;}
 .border {
-	stroke: gray !important;
+	stroke: gray;
 	stroke-width: 0.5px;
 	/*
 	*/
@@ -128,4 +142,102 @@ text.aq0-4{fill:black !important; } text.aq1-4{fill:black !important; } text.aq2
 .fill {
 	fill: #f7f7f7 !important;
 }
-h2 { visible: none;}
+path.dark {
+	fill: lightgray;
+}
+
+#ctrls ul { list-style-type: none; }
+#ctrls ul > li  { display: inline; float: left; font-size: 10px;}
+#ctrls a { display: block; padding: 8px; padding-top: 0; color: lightgrey; }
+#ctrls div { display: inline; }
+#ctrls select { font-size: 10px; width: 125px; }
+#ctrls { height: 15px; }
+
+#intro {
+	padding: 0;
+	position: relative;
+	top: -100vh;
+	height: 90vh;
+	width: 100%;
+	z-index: 10;
+}
+#intro > .bg {
+	width: 100%;
+	height: 100%;
+}
+.panel {
+	height: 100vh;
+	width: 100%;
+}
+.scene_separator
+{
+	border: 1px solid white;
+	height: 10vh;
+	width: 100%;
+}
+#stats {
+	background-color: white;
+}
+.accuracy_line {
+	visibility: hidden;
+	fill: none;
+}
+.accuracy_4, .accuracy_2 { 
+	visibility: visible; 
+	stroke-width: 3px;
+}
+.accuracy_4 { 
+	stroke: red;
+}
+.accuracy_2 { 
+	stroke: orange;
+}
+circle {
+}
+.boston_grid circle {
+	visibility: visible;
+	opacity: 1;
+	stroke-width: 1px;
+	fill-opacity: 0.5;
+
+}
+.boston_grid circle:hover { 
+	stroke: white;
+}
+circle.blue { 
+	fill: blue;
+}
+circle.yellow { 
+	fill: yellow;
+	stroke:yellow;
+}
+circle.orange { 
+	fill: orange;
+	stroke:orange;
+}
+circle.red { 
+	fill: red;
+	stroke: red;
+}
+circle.none {
+	fill: none;
+}
+#intro_fios_race {
+	background-color: lightgray;
+}
+.axis path, .axis line {
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
+}
+.axis path {
+	fill: none;
+}
+.axis line {
+	shape-rendering: crispEdges;
+	stroke: #000;
+}
+.axis .minor line {
+	stroke: #777;
+	stroke-dasharray: 2,2;
+}

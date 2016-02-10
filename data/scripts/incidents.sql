@@ -1,14 +1,14 @@
 COPY (
 	SELECT 
 		nb.name as neighborhood,
-		date_part ('year', "FIO_DATE_CORRECTED"::timestamp) as year, 
-		"RACE_ID" as race,
-		count (*) 
+		upper (trim (both ' ' from ucrpart)) as ucr, 
+		upper (trim (both ' ' from naturecode)) as ncode, 
+		upper (trim (both ' ' from incident_type_description)) as description, 
+		year,
+		count (*) as cnt 
 	FROM 
-		boston_police_fio fio 
-			JOIN addys ad 
-				ON fio."LOCATION" = ad.original
-			JOIN boston_neighborhoods nb ON ST_Contains (nb.geom, ad.geom)
+		boston_police_incidents inc 
+			JOIN boston_neighborhoods nb ON ST_Contains (nb.geom, inc.geom)
 	GROUP BY 
-		neighborhood, year, race
+		neighborhood, ucr, ncode, description, year 
 ) TO STDOUT DELIMITER ',' CSV HEADER

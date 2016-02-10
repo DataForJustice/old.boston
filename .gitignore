@@ -7,6 +7,8 @@ web/htdocs/js/TweenMax.min.js
 web/htdocs/js/animation.gsap.min.js
 web/htdocs/js/debug.addIndicators.min.js
 web/htdocs/js/topojson.js
+web/htdocs/css/bootstrap.min.css
+web/htdocs/js/bootstrap.min.js
 bower_components
 bowerphp
 data/raw/
