@@ -420,7 +420,6 @@ Ant.prototype = {
 		} else {
 		}
 		this.initSlides ();
-		this.initScroll ();
 	},
 	/*
 	* dataCallback.
@@ -428,6 +427,7 @@ Ant.prototype = {
 	* Will initialize the maps and the charts.
 	*/
 	dataCallback: function () {
+		this.initScroll ();
 		this.initControls ();
 		if (arguments.length > 0) {
 			if (arguments [0]) {

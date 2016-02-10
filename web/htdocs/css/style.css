@@ -4,12 +4,8 @@ html,body {
 	margin: 0;
 	padding: 0;
 }
-#intro_map .counties {
-	fill: none;
-	stroke: lightgray;
-}
 body {
-	background: url(/policebg.png) no-repeat left top fixed;
+	/*background: url(/policebg.png) no-repeat left top fixed;*/
 	background-size: 100% 100%;
 }
 #main_text {
@@ -25,7 +21,8 @@ body {
 }
 h1 {
 	font-size: 2em;
-	color: white;
+	color: black;
+	text-align: center;
 }
 .boundary {
 	fill: #e6e6e6;
@@ -43,17 +40,31 @@ h1 {
 }
 #movie {
 	max-width: 1px !important;
+	margin: 0;
 } 
 #main {
 }
 .scene {
-	min-height: 90vh;
-	padding-bottom: 20px;
-	margin-right: 5px;
-	margin-bottom: 10vh;
+	min-height: 80vh;
+	margin-bottom: 10px;
+	max-width: 1px;
+}
+.hstring {
+	width: 100vw;
+	height: 0px;
+}
+.vstring { 
+	height: 100vh;
+	width: 0px;
+}
+.scene_content {
+	position: relative;
+	left: 35%;
+	width: 30%;
 }
 .scene.highlight h1 {
-	color: red;
+	color: black;
+	font-size: 2.7em;
 
 }
 
@@ -75,6 +86,10 @@ h1 {
 .counties .label {
 	font-size: 35px;
 	fill-opacity: 1;
+}
+.counties path {
+	fill: lightgray;
+	stroke: white;
 }
 #map .blockgroups text {
 	font-size: 0.4em;
@@ -99,9 +114,10 @@ h1 {
 
 }
 .neighborhoods path {
-	stroke: black;
-	stroke-width: 2px;
-	fill: none;
+	stroke: lightgray;
+	stroke-width: 1px;
+	fill: gray;
+
 }
 .neighbhorhoods text {
 	fill: white !important;
@@ -115,13 +131,7 @@ h1 {
 	font-size: 15px;
 }
 #mini_map {
-	border: 1px white solid;
-}
-#mini_map .neighborhoods path { 
-	fill: white !important;
-}
-#mini_map .counties path { 
-	fill: lightgray !important;
+	border: 1px black solid;
 }
 /*
 .poc.q0-4{stroke:rgb(237,248,233); fill: rgb(237,248,233);} .poc.q1-4{stroke:rgb(186,228,179); fill: rgb(186,228,179)} .poc.q2-4{stroke:rgb(116,196,118); fill: rgb(116,196,118);} .poc.q3-4{stroke:rgb(35,139,69); fill: rgb(35,139,69);}
