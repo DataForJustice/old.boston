@@ -86,9 +86,11 @@ var asBars = function () {
 				},
 			quantifier) : function (selector, d) { d3.select (selector).attr ("class", ""); };
 		var margin = this.margin;
+		this.svg.selectAll ("g").remove (); //HACK. Sucks. 
 		var bar = this.svg.selectAll ("g")
-			.data (data.items ())
-			.enter ().append ("g")
+			.data (data.items ());
+
+		bar.enter ().append ("g")
 			.attr ("transform", function (d, i) { return "translate(" + i * barWidth + ", " + margin.top + ")"; });	
 
 		bar.append ("rect")
@@ -186,7 +188,6 @@ ant.charts.map = function (container, width, height) {
 	this.features = {};
 	this.rateById = d3.map ();
 	this.svg = d3.select (container).append ("svg").attr ("width", width).attr ("height", height); 
-	this.quantize = d3.scale.quantize ().domain ([0, 1000]).range (d3.range (9).map (function (i) { return "q" + i + "-9"}));
 	this.topologies = {};
 	this.projection = d3.geo.mercator ();
 	this.redraw = function (topo, quantifier, plot) {
@@ -313,20 +314,33 @@ ant.charts.map.topology = function (cont, name, path, t, f) {
 		var qn = quantifier ? $.proxy (
 				function (selector, d, plot) {  
 					var attrs = quantifier.fn.apply (quantifier.context, [d, quantifier.args, quantifier.data])
-					if (attrs && plot == "points") { 
-						attrs.cx = path.centroid (d) [0];
-						attrs.cy = path.centroid (d) [1];
+					if (attrs) { 
+						if (plot == "points") { 
+							attrs.cx = path.centroid (d) [0];
+							attrs.cy = path.centroid (d) [1];
+						}
+						if (attrs.text) {
+							var xs = {"x": path.centroid (d)[0], "y": path.centroid (d)[1]};
+							d3.select (selector.parentNode)
+								.append ("svg:text")
+								.attr (xs)
+								.attr (attrs)
+								.text (attrs.text);
+						}
+						//d3.select (selector).attr (attrs); 
+						var data = attrs.data;
+						attrs.data = null;
+						selector.attr (attrs);
+						if (data) { 
+							for (var d in data) { 
+								var val = data [d];
+								if (val === Object (val)) { 
+									val = JSON.stringify (val);
+								}
+								selector.attr ("data-" + d, val);
+							}
+						}
 					}
-					if (attrs && attrs.text) {
-						var xs = {"x": path.centroid (d)[0], "y": path.centroid (d)[1]};
-						d3.select (selector.parentNode)
-							.append ("svg:text")
-							.attr (xs)
-							.attr (attrs)
-							.text (attrs.text);
-					}
-					//d3.select (selector).attr (attrs); 
-					selector.attr (attrs);
 				},
 			quantifier) : function (selector, d) { selector.attr ("class", ""); };
 
@@ -349,12 +363,16 @@ ant.charts.map.topology = function (cont, name, path, t, f) {
 				.attr ("id", setId)
 				.enter ()
 				.append ("circle")
+				.on ("click", this.createCallback ("click"))
+				.on ("mouseover", this.createCallback ("mouseover"))
+				.on ("mouseout", this.createCallback ("mouseout"))
 		}
 	}
 	this.createCallback = function (type) {
 		var me = this;
-		return function () {
-			me.callback.apply (me, [type, arguments]);
+		return function (...args) {
+			args.push (this);
+			me.callback.apply (me, [type, args]);
 		}
 	}
 	this.callbacks = {};
@@ -496,7 +514,9 @@ Ant.prototype = {
 		var data = $(element).data ();
 		var quantify = data.quantify;
 		var quantifier = data.quantifier;
-		var qArgs = data.quantifier_args
+		//console.log ($(element));
+	
+		var qArgs = data.quantifier_args;
 
 		var controlChart = !data.control_chart ? id : data.control_chart;
 
@@ -578,13 +598,6 @@ Ant.prototype = {
 				this.quantifyMap (controlChart, layers [l.trim()]);
 			}
 		}
-		// Perhaps I want to implement that when an element in the map is clicked, it will parseElement?
-		var onClickElement = data.map_click_element;
-		var onClickLayer = data.map_click_layer;
-		var onClick = data.map_click;
-		if (onClick && onClickLayer) {
-			this.charts [controlChart].topologies [onClickLayer].on ("click", this.getCallback (onClick), this);
-		}
 		var zoomTo = data.zoom_to;
 		var zoomLevel = data.zoom_level; 
 		if (zoomTo) {
@@ -626,7 +639,11 @@ Ant.prototype = {
 		* This is where the difference between maps and normal charts relies: maps have different layers and we just want to quantify one of them here.
 		*/
 		var plot = l.plot ? l.plot : "lines"
-		this.charts [map].topologies [layer].redraw (this.setFeatureId (l), qn, plot);
+		var l = this.charts [map].topologies [layer];
+		l.redraw (this.setFeatureId (l), qn, plot);
+		l.on ("click", function (a, id, x, el) { this.parseElement (el); }, this); 
+		l.on ("mouseover", function (a, id, x, el) { this.parseElement (el); }, this); 
+		l.on ("mouseout", function (a, id, x, el) { this.parseElement (el); }, this); 
 		this.charts [map].reZoom ();
 	},
 	setFeatureId: function (layer) {
@@ -736,19 +753,19 @@ Ant.prototype = {
 		this.scroll.on ("scene_leave", $.proxy (this.scrollLeave, this));
 	}
 };
-function Nestify (data, keys, rollup) {
-	this.data = this.init (data, keys, rollup);
+function Nestify (data, keys, rollup, interiorKey) {
+	this.data = this.init (data, keys, rollup, interiorKey);
 	return this;
 }
 Nestify.prototype = {
 	constructor: Nestify,
-	init: function (data, keys, rollup) {
+	init: function (data, keys, rollup, interiorKey) {
 		if (!data) throw "No data in nestify";
 		var n = d3.nest ();
 		if (keys) {
 			for (x in keys) {
 				var cb = function (k) { 
-					return function (r) { return r [k] }; 
+					return function (r) { if (interiorKey) { r = r [interiorKey]; } return r [k] }; 
 				}
 				n = n.key (cb (keys [x]));
 			}
@@ -758,7 +775,7 @@ Nestify.prototype = {
 				var obj = {}; 
 				for (d in rollup) { 
 					var cb = function (col) { 
-						return function (a) { return a [col]; }
+						return function (a) { if (interiorKey) { a =  a [interiorKey]; } return a [col]; }
 					}
 					obj [ rollup [d]] = d3.sum (r, cb (rollup [d]));
 				} 

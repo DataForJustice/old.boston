@@ -51,7 +51,7 @@ h1 {
 }
 .hstring {
 	width: 100vw;
-	height: 0px;
+	height: 10px;
 }
 .vstring { 
 	height: 100vh;
@@ -61,6 +61,7 @@ h1 {
 	position: relative;
 	left: 35%;
 	width: 30%;
+	z-index: 1;
 }
 .scene.highlight h1 {
 	color: black;
@@ -79,7 +80,7 @@ h1 {
 	stroke: black;
 }
 .counties {
-	fill: rgba(255,255,255,0.3);
+	fill: rgba(0,0,0,0.7);
 	stroke: #d3d3d3;
 }
 .label { fill: #000; }
@@ -116,8 +117,10 @@ h1 {
 .neighborhoods path {
 	stroke: lightgray;
 	stroke-width: 1px;
+	fill: none;
+}
+.blockgroups path { 
 	fill: gray;
-
 }
 .neighbhorhoods text {
 	fill: white !important;
@@ -138,7 +141,7 @@ h1 {
 .white.q0-4{stroke:rgb(242,240,247); fill: rgb(242,240,247);} .white.q1-4{stroke:rgb(203,201,226); fill: rgb(203,201,226);} .white.q2-4{stroke:rgb(158,154,200); fill:rgb(158,154,200);} .white.q3-4{stroke:rgb(106,81,163); fill: rgb(106,81,163);}
 .black.q0-4{stroke:rgb(239,243,255); fill:rgb(239,243,255);} .black.q1-4{stroke:rgb(189,215,231); fill:rgb(189,215,231);} .black.q2-4{stroke:rgb(107,174,214); fill:rgb(107,174,214);} .black.q3-4{stroke:rgb(33,113,181); fill:rgb(33,113,181);}
 */
-.q0-4{fill:rgb(247,247,247)} .q1-4{fill:rgb(204,204,204)} .q2-4{fill:rgb(150,150,150)} .q3-4{fill:rgb(82,82,82)}
+.q0-4{fill:rgb(247,247,247)!important;} .q1-4{fill:rgb(204,204,204)!important;} .q2-4{fill:rgb(150,150,150)!important;} .q3-4{fill:rgb(82,82,82)!important;}
 .aq0-4{fill:rgb(255,255,178) !important; } .aq1-4{fill:rgb(254,204,92) !important; } .aq2-4{fill:rgb(253,141,60) !important;} .aq3-4{fill:rgb(227,26,28) !important;}
 path.lq0-4{stroke:rgb(255,255,178) !important; } path.lq1-4{stroke:rgb(254,204,92) !important; } path.lq2-4{stroke:rgb(253,141,60) !important;} path.lq3-4{stroke:rgb(227,26,28) !important;}
 text.aq0-4{fill:black !important; } text.aq1-4{fill:black !important; } text.aq2-4{fill:black !important;} text.aq3-4{fill:black !important;}
@@ -181,9 +184,11 @@ path.dark {
 }
 .scene_separator
 {
-	border: 1px solid white;
 	height: 10vh;
 	width: 100%;
+	position: relative;
+	background-color: gray;
+	z-index: 100;
 }
 #stats {
 	background-color: white;
@@ -250,4 +255,8 @@ circle.none {
 .axis .minor line {
 	stroke: #777;
 	stroke-dasharray: 2,2;
+}
+#yearly_chart rect { 
+	background-color: red;
+	border: 1px solid black;
 }
