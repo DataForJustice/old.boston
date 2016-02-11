@@ -19,7 +19,7 @@
 			<div class="col-md-5">
 				Population overlays: 
 				<a data-control data-control_chart="a_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["white"]}{/literal}'><b data-control_chart="b_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["white"]}{/literal}'>White</b></a>,
-				<a data-control data-control_chart="a_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["black", "poc"]}{/literal}'><b data-control_chart="b_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": "!white"}{/literal}'>Non-white</b></a>,
+				<a data-control data-control_chart="a_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["black", "poc"]}{/literal}'><b data-control_chart="b_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["black", "poc"]}{/literal}'>Non-white</b></a>,
 				<a data-control data-control_chart="a_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["black"]}{/literal}'><b data-control_chart="b_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["black"]}{/literal}'>Black</b></a>,
 				<a data-control data-control_chart="a_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["poc"]}{/literal}'><b data-control_chart="b_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["poc"]}{/literal}'>Other people of color</b></a>
 			</div>
