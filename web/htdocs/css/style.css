@@ -6,7 +6,7 @@ html,body {
 }
 body {
 	/*background: url(/policebg.png) no-repeat left top fixed;*/
-	background-color: gray;
+	background-color: #ABBCCC;
 	background-size: 100% 100%;
 }
 #main_text {
@@ -85,6 +85,7 @@ a {
 }
 .counties path {
 	fill: #8AA389; 
+	fill: #A4A8BF;
 	stroke: white;
 }
 #map .blockgroups text {
@@ -105,12 +106,13 @@ a {
 .columns {
 }
 .neighborhoods path {
-	stroke: lightgray;
+	stroke: gray;
 	stroke-width: 1px;
 	fill: none;
 }
 .blockgroups path { 
 	fill: #636C75;
+	fill: #ABBCCC;
 }
 .neighbhorhoods text {
 	fill: white !important;
@@ -178,7 +180,7 @@ path.dark {
 	height: 10vh;
 	width: 100%;
 	position: relative;
-	background-color: gray;
+	background-color: #ABBCCC;
 	z-index: 100;
 }
 #stats {
