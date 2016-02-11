@@ -109,7 +109,7 @@ $(document).ready (function () {
 					var data = d.data [id];
 					if (data) { 
 						var pct = (data [args.race] * 100) / (data.white + data.black + data.poc);
-						return {"class": "q" + d.scale (pct) + "-4"};
+						return {"class": "qg" + d.scale (pct) + "-4"};
 					}
 
 				}

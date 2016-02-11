@@ -6,6 +6,7 @@ html,body {
 }
 body {
 	/*background: url(/policebg.png) no-repeat left top fixed;*/
+	background-color: gray;
 	background-size: 100% 100%;
 }
 #main_text {
@@ -23,6 +24,9 @@ h1 {
 	font-size: 2em;
 	color: black;
 	text-align: center;
+}
+a { 
+	color: white;
 }
 .boundary {
 	fill: #e6e6e6;
@@ -50,7 +54,7 @@ h1 {
 	max-width: 1px;
 }
 .hstring {
-	width: 100vw;
+	width: 95vw;
 	height: 10px;
 }
 .vstring { 
@@ -68,19 +72,10 @@ h1 {
 	font-size: 2.7em;
 
 }
-
-#map .blocks {
-	fill-opacity: 1;
-}
-#map .line {
-	
-}
-#map .boundary {
-	fill: none;
-	stroke: black;
+.map { 
+	background-color: #EBFAFF;
 }
 .counties {
-	fill: rgba(0,0,0,0.7);
 	stroke: #d3d3d3;
 }
 .label { fill: #000; }
@@ -89,7 +84,7 @@ h1 {
 	fill-opacity: 1;
 }
 .counties path {
-	fill: lightgray;
+	fill: #8AA389; 
 	stroke: white;
 }
 #map .blockgroups text {
@@ -109,18 +104,13 @@ h1 {
 }
 .columns {
 }
-#map .blockgroups {
-	fill: #F7F7F7;
-	stroke-width: 1.5px;
-
-}
 .neighborhoods path {
 	stroke: lightgray;
 	stroke-width: 1px;
 	fill: none;
 }
 .blockgroups path { 
-	fill: gray;
+	fill: #636C75;
 }
 .neighbhorhoods text {
 	fill: white !important;
@@ -146,6 +136,7 @@ h1 {
 path.lq0-4{stroke:rgb(255,255,178) !important; } path.lq1-4{stroke:rgb(254,204,92) !important; } path.lq2-4{stroke:rgb(253,141,60) !important;} path.lq3-4{stroke:rgb(227,26,28) !important;}
 text.aq0-4{fill:black !important; } text.aq1-4{fill:black !important; } text.aq2-4{fill:black !important;} text.aq3-4{fill:black !important;}
 .dq0-3{ stroke: #fdd8a8 !important; stroke-width: 3px;} .dq1-3{stroke: #FF9100 !important; stroke-width: 3px; } .dq2-3{stroke:red !important; stroke-width: 3px;}
+.qg0-4{fill: white !important} .qg1-4{fill: #C7DCF2 !important} .qg2-4{fill: #909DAB !important}  .qg3-4{fill: #636C75 !important}
 .border {
 	stroke: gray;
 	stroke-width: 0.5px;
@@ -256,7 +247,10 @@ circle.none {
 	stroke: #777;
 	stroke-dasharray: 2,2;
 }
+#yearly_chart {
+	border: 1px solid black;
+}
 #yearly_chart rect { 
-	background-color: red;
+	fill: #8F1111;
 	border: 1px solid black;
 }
