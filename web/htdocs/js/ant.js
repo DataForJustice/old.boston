@@ -370,7 +370,11 @@ ant.charts.map.topology = function (cont, name, path, t, f) {
 	}
 	this.createCallback = function (type) {
 		var me = this;
-		return function (...args) {
+		return function () {
+			var args = [];
+			for (var a in arguments) {
+				args.push (arguments [a]);
+			}
 			args.push (this);
 			me.callback.apply (me, [type, args]);
 		}
