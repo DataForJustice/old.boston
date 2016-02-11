@@ -108,7 +108,9 @@ $(document).ready (function () {
 					var id = a.properties.gid;
 					var data = d.data [id];
 					if (data) { 
-						var pct = (data [args.race] * 100) / (data.white + data.black + data.poc);
+						var sum = 0;
+						for (var i in args.race) { sum += data [args.race [i]]; }
+						var pct = (sum * 100) / (data.white + data.black + data.poc);
 						return {"class": "qg" + d.scale (pct) + "-4"};
 					}
 
