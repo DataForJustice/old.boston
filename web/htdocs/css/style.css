@@ -165,7 +165,6 @@ path.dark {
 	top: -100vh;
 	height: 90vh;
 	width: 100%;
-	z-index: 10;
 }
 #intro > .bg {
 	width: 100%;

@@ -10,6 +10,10 @@
 		<div id="yearly_chart_arrests" data-chart="bars" style="position:absolute; left: 79%; top: 75%; width: 20%; height: 10%; margin: 0; padding: 0;">&nbsp;</div>
 	</div>
 	<div id="pop_map" class="row" style="height: 100%; position: absolute; top: 0; width: 100%;">
+		<div id="num_pop" style="position: absolute; top: 5%; left: 20%; z-index: 1000; visibility: hidden;"><h1>Population: 617,594</h1></div>
+		<div id="num_white" style="position: absolute; top: 5%; left: 70%; z-index: 1000; visibility: hidden;"><h1>47% white,<small><br/> excl. white hispanics</small></h1></div>
+		<div id="num_black" style="position: absolute; top: 60%; left: 20%; z-index: 1000; visibility: hidden;"><h1>24% Black</h1></div>
+		<div id="num_poc" style="position: absolute; top: 60%; left: 50%; z-index: 1000; visibility: hidden;"><h1>28.8% other P.O.C, <small><br/> incl. white hispanics</small></h1></div>
 		<div data-chart="map" data-map_layers="counties,blockgroups,neighborhoods" id="p_map" data-zoom_to="counties_25025" data-zoom_level="110" data-map_center_lat="42.319834" data-map_center_lon="-71.087294" class="col-md-8 map col-md-offset-2" style="height: 80%; padding: 0;"></div>  
 	</div>
 <!--	<div id="race_comp" data-chart="pie" style="position: absolute; top: 79%; left: 1%; width: 20vh; height: 20vh; margin: 0; padding: 0; border: 1px solid black;"></div>
@@ -18,6 +22,10 @@
 		<audio data-media="audio" id="narration" preload="auto" autobuffer>
 			<source src="/wod.mp3" type="audio/mp3"></source>	
 		</audio>
+		<span id="narration_1" data-subscribe_media="narration" data-subscribe_time="8" data-show="num_pop">&nbsp;</span>
+		<span id="narration_1" data-subscribe_media="narration" data-subscribe_time="17" data-show="num_white">&nbsp;</span>
+		<span id="narration_1" data-subscribe_media="narration" data-subscribe_time="21" data-show="num_black">&nbsp;</span>
+		<span id="narration_1" data-subscribe_media="narration" data-subscribe_time="27" data-show="num_poc">&nbsp;</span>
 		<span id="narration_a" data-subscribe_media="narration" data-subscribe_time="17" data-parse="p_lay_white">&nbsp;</span>
 		<span id="narration_b" data-subscribe_media="narration" data-subscribe_time="21" data-parse="p_lay_black">&nbsp;</span>
 		<span id="narration_c" data-subscribe_media="narration" data-subscribe_time="27" data-parse="p_lay_poc">&nbsp;</span>
