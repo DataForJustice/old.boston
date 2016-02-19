@@ -52,8 +52,6 @@ var asLines = function () {
 				},
 			quantifier) : function (selector, d) { d3.select (selector).attr ("class", ""); };
 
-
-
 		var bar = this.svg.selectAll ("path")
 			.data (lines)
 			.enter ()
@@ -129,7 +127,7 @@ var asChart = function () {
 				var qn = quantifier;
 				var rets = [];
 				if (a !== Object (a)) { //no objects please, only arrays.
-					// this is for a nested collection. It only supports two dimensions. AFAIK. 
+					// this is for a nested collection. It only supports the first two dimensions. AFAIK. 
 					for (var d in a) { 
 						var ret = qn.fn.apply (qn.context, [k, {key: d}, qn.args, qn.data]); //calls the users' callback for every item. 
 						if (innerCallback) rets.push (innerCallback.apply (this, [ret])); // calls charts' "inner" callback with users' input.
@@ -253,6 +251,12 @@ ant.charts.map = function (container, width, height) {
 			this.zoomTo (this.zoomSelector, this.zoomContext);
 		}
 	},
+	this.removeClass = function (selector, cls) { 
+		this.svg.selectAll (selector).classed (cls, false);
+	},
+	this.addClass = function (selector, cls) { 
+		this.svg.selectAll (selector).classed (cls, true);
+	}
 	this.zoomTo = function (selector, context) {
 		if (!context) context = this.context 
 		var e = d3.select (selector);
@@ -327,7 +331,8 @@ ant.charts.map.topology = function (cont, name, path, t, f) {
 								.attr (attrs)
 								.text (attrs.text);
 						}
-						//d3.select (selector).attr (attrs); 
+						// This section adds the data-* attributes returned from the quantifier to the element...!!! 
+						// This allows the cascading of visualizations
 						var data = attrs.data;
 						attrs.data = null;
 						selector.attr (attrs);
@@ -417,6 +422,7 @@ function Ant (conf) {
 	this.currentScene = null;
 	this.currentElement = null;
 	this.dataOrder = [];
+	this.medium = {};
 
 	this.data = {};
 
@@ -494,6 +500,8 @@ Ant.prototype = {
 	scrollEnter: function (element) {
 		$(element.parentNode).children ().removeClass ("highlight");
 		$(element).addClass ("highlight");
+		console.log ("scroll enter");
+		console.log (element);
 		this.parseElement (element);
 		$(element).find ("form[data-control]").change ();
 	},
@@ -514,68 +522,108 @@ Ant.prototype = {
 		/* 
 		* Lets see what we have here: data? should we quantify something?
 		*/
-		var id = $(element).attr ("id");
-		var data = $(element).data ();
+		var data;
+		if (typeof element === 'string' || element.tagName) { // this is a string or an HTMLElement (check compatibility with other browsers)
+			var id = $(element).attr ("id");
+			data = $(element).data ();
+		} else { 
+			console.log ((element != Object (element)) + "||" +(element instanceof HTMLElement))
+			id = element.id;
+			data = element;
+		}
 		var quantify = data.quantify;
 		var quantifier = data.quantifier;
-		//console.log ($(element));
 	
 		var qArgs = data.quantifier_args;
 
 		var controlChart = !data.control_chart ? id : data.control_chart;
+		if (controlChart) { 
 
-		var chartType = this.chartType (controlChart); 
-		/*
-		* Chart: Lines.
-		*/
-		if (chartType == "lines") {
-			this.parseChart (element, data);
-		}
-		/*
-		* Chart: Bars.
-		*/
-		if (chartType == "bars") {
-			this.parseChart (element, data);
-		}
-		/*
-		* Chart: Pie.
-		*/
-		if (chartType == "pie") {
-			this.parseChart (element, data);
-		}
-		/*
-		* If we have to quantify, lets prequantify :)
-		*/
-		if (quantify && quantifier) {
-			var qObj = {fn: quantifier, ar: qArgs};
-			try {
-			qObj.data = this.prequantify (this.data [quantify], qObj);
-			if (!qObj.data) qObj.data = this.data [quantify];
-			if (chartType == "bars") {
-				this.quantifyChart (controlChart, qObj);
+			var chartType = this.chartType (controlChart); 
+			if (chartType == "lines" || chartType == "bars" || chartType == "pie") {
+				this.parseChart (element, data);
 			}
-			if (chartType == "lines") {
-				this.quantifyChart (controlChart, qObj);
+			/*
+			* If we have to quantify, lets prequantify :)
+			*/
+			if (quantify && quantifier) {
+				var qObj = {fn: quantifier, ar: qArgs};
+				try {
+					qObj.data = this.prequantify (this.data [quantify], qObj);
+					if (!qObj.data) qObj.data = this.data [quantify];
+					if (chartType == "lines" || chartType == "bars" || chartType == "pie") {
+						this.quantifyChart (controlChart, qObj);
+					}
+					if (chartType == "map") {
+						this.quantifyMap (controlChart, quantify, qObj);
+					}
+				} catch (e) { console.log (e); console.log (e.stack); }
 			}
+			/*
+			* Chart: Map.
+			*/
 			if (chartType == "map") {
-				this.quantifyMap (controlChart, quantify, qObj);
+				this.parseMap (element, data);
 			}
-			if (chartType == "pie") {
-				this.quantifyChart (controlChart, qObj);
-			}
-			} catch (e) { console.log (e); console.log (e.stack); }
 		}
 		/*
-		* Chart: Map.
+		* Videos
 		*/
-		if (chartType == "map") {
-			this.parseMap (element, data);
+		if (data.control_media) { 
+			var m = this.medium [data.control_media];
+			if (m) { 
+				m.play (); m.pause ();  //this has to be done this way so popcornjs starts counting...
+				if (data.media_play !== undefined) { 
+					console.log ("will play");
+					m.play ();
+					m.muted (false);
+				}
+				if (data.media_stop !== undefined) { 
+					m.pause ();
+					m.currentTime (0);
+				}
+				if (data.media_time) {
+					m.pause ();
+					m.currentTime (data.media_time);
+					m.play ();
+				}
+				if (data.media_pause !== undefined) {
+					m.pause ();
+				}
+				if (data.media_mute !== undefined) {
+					m.muted (true);
+				}
+				if (data.media_unmute !== undefined) { 
+					m.muted (false);
+				}
+			}
 		}
 		/*
-		* Children.
+		* Hide and show.
 		*/
-		var cb = function (ct) { return function (m) { ct.parseElement.apply (ct, [this]);  } }
-		$(element).children ("[data-control_chart]").each (cb (this));
+		if (data.hide !== undefined) {
+			if (data.hide == "") { $(element).hide (); $(element).css ("visibility", "hidden"); } else { $("#" + data.hide).hide (); $("#" + data.hide).css ("visibility", "hidden"); }
+		}
+		if (data.show !== undefined) {
+			if (data.show == "") { $(element).show (); $(element).css ("visibility", "visible"); } else { $("#" + data.show).show (); $("#" + data.show).css ("visibility", "visible"); }
+		}
+		/*
+		* Other elements to parse
+		*/
+		if (data.parse) { 
+			if (Array.isArray (data.parse)) { 
+				for (var x in data.parse) { 
+					this.parseElement (data.parse [x], false);
+				}
+			}
+			else {
+				var x = data.parse.split (",");
+				for (var e in x) { 
+					this.parseElement ("#" + x[e].trim (), false);
+				}
+
+			}
+		}
 	},
 	prequantify: function (data, quantifier) {
 		if (!data) throw "No data... " + quantifier;
@@ -609,6 +657,11 @@ Ant.prototype = {
 		} else if (zoomLevel) {
 			this.charts [controlChart].setScale (zoomLevel); 
 		}
+		var highlight = data.highlight;
+		if (highlight) { 
+			this.charts [controlChart].removeClass (".highlight", "highlight");
+			this.charts [controlChart].addClass (data.highlight, "highlight");
+		}
 
 	},
 	/*
@@ -640,7 +693,7 @@ Ant.prototype = {
 		if (!this.charts [map].topologies[layer]) throw "No layer: "+layer + " for map: " + map;
 
 		/*
-		* This is where the difference between maps and normal charts relies: maps have different layers and we just want to quantify one of them here.
+		* This is where the difference between maps and normal charts resides: maps have different layers and we just want to quantify one of them here.
 		*/
 		var plot = l.plot ? l.plot : "lines"
 		var l = this.charts [map].topologies [layer];
@@ -665,9 +718,10 @@ Ant.prototype = {
 				var args = {};
 				$.each ($(this).find (":input").serializeArray (), function (_, kv) { if (kv.value != "IGNORE") { args [kv.name] = kv.value; } });
 				$(this).data ("quantifier_args", args);
-				a.data.me.parseElement.apply (a.data.me, [this]);
+				a.data.me.parseElement.apply (a.data.me, [this, false]);
 			}
 		);
+		//TODO check if this is redundant from the method above
 		$("select[data-control]").change ({me: this},
 			function (a) {
 				a.data.me.parseElement.apply (a.data.me, [$(this).children (":selected")]);
@@ -679,6 +733,52 @@ Ant.prototype = {
 				x.parseElement.apply (x, [this]);
 			}
 		);
+		//$("[data-subscribe_media]").
+		var cb = function (me) { 
+			return function (r) { 
+				me.addMedia.apply (me, [$(this) [0]]); 
+			}
+		};
+		$("[data-media]").each (cb (this));
+	},
+	addMedia: function (elm) { 
+		var id = elm.id;
+		var type = $(elm).data ("media");
+		var x;
+		console.log (id);
+		switch (type) {
+			case 'youtube': x = new Popcorn.HTMLYouTubeVideoElement( elm ); break
+			case 'vimeo': x = new Popcorn.HTMLVimeoVideoElement( elm ); break;
+			case 'audio': x = "#" + id; break;
+		}
+		if (x) { 
+			x.src = $(elm).data ("media_url");
+			var media = new Popcorn (x);
+			media.load ();
+			var cb = function (context, obj, elm) { 
+				return function (e) { 
+					var currentSecond = Math.floor (obj.currentTime ());
+					if (obj.currentSecond != currentSecond) {
+						var parseCb = function (me) { 
+							return function () { 
+								me.parseElement.apply (me, [$(this) [0]]);
+							} 
+						}
+						console.log (currentSecond);
+						$("[data-subscribe_media='" + elm.id + "'][data-subscribe_time='" + currentSecond + "']").each (parseCb (context));
+						obj.currentSecond = currentSecond;
+
+					}
+
+				}
+			}
+			media.on ("timeupdate", cb (this, media, elm));
+			//TODO subscribers for play, stop, etc.
+
+			this.medium [id] = media;
+		} else {
+			throw "could not find media type: (" + type + ")"; 
+		}
 	},
 	chartType: function (chartName) {
 		return this.chartTypes [chartName];
@@ -742,11 +842,13 @@ Ant.prototype = {
 			});
 			for (var p in slides [c]) {
 				var panel = slides [c] [p];
-				new ScrollMagic.Scene ({ 
+				var scene = new ScrollMagic.Scene ({ 
 					triggerElement: panel
 				})
 				.setPin (panel)
 				.addTo (controller);
+				var cb = function (me) { return function (e) { me.parseElement.apply (me, [e.target.triggerElement ()]); } };
+				scene.on ("enter", cb (this));
 			}
 		}
 	},
@@ -801,6 +903,7 @@ Nestify.prototype = {
 				leaf.nests = keys.length 
 			}
 			leaf.values = function () { var ks = []; for (var k in this) {if (this [k] === Object (this [k]) && typeof this [k] != "function") { ks.push (this [k]);} } return ks; }
+			//TODO add keyName, this way we can match it to key == "2010" and keyName == "year" 
 			leaf.items = function () { var ks = [];  for (var k in this) { if (this [k] === Object (this [k]) && typeof this [k] != "function") { ks.push ({key: k, values: this [k]}); } } return ks; }
 			leaf.max = function (accessor) { return d3.max (this.items (), accessor); } 
 			leaf.min = function (accessor) { return d3.min (this.items (), accessor); } 

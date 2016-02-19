@@ -95,13 +95,24 @@ $(document).ready (function () {
 					var data = d.data [id];
 					var qn = d3.scale.quantize ().domain (d.scale.domain ()).range (["blue", "yellow", "orange", "red"]);
 					if (data) { 
-						d.scale.range ([2, 4, 8, 10]);
+						//d.scale.range ([2, 4, 8, 10]);
+						d.scale.range ([2, 4, 8, 16]);
 						if (args.d_year && data [args.d_year]) { 
 							data = data [args.d_year];
 						}
 						var cnt = data.sum (function (a) { if (args.ncode.indexOf (a.key) !== -1) { return a.values.count; } });
-						var data = {control_chart: "yearly_chart", "quantify": "wod", "quantifier": "year", "quantifier_args": {grid: id} };
-						return {"class": qn (cnt), "r": d.scale (cnt), "data": data};
+						// this array gets passed to the parser and each element gets parsed too each time the element is hovered or clicked 
+						var parse = [
+							{control_chart: "yearly_chart_arrests", "quantify": "wod", "quantifier": "year", "quantifier_args": {grid: id}},
+							/* the following highlights all the circles with the same color :) */
+							{control_chart: "a_map", highlight: "." + qn (cnt)},
+							{control_chart: "b_map", highlight: "." + qn (cnt)},
+							{control_chart: "a_map", highlight: ".grid_" + id}, 
+							{control_chart: "b_map", highlight: ".grid_" + id}, 
+						];
+						var data = {control_chart: "yearly_chart", "quantify": "wod", "quantifier": "year", "quantifier_args": {grid: id}, "parse": parse};
+
+						return {"class": qn (cnt) + " grid_" + id, "r": d.scale (cnt), "data": data};
 					}
 				},
 				race: function (a, args, d) { 

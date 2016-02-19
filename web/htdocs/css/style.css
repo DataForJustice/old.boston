@@ -200,8 +200,6 @@ path.dark {
 .accuracy_2 { 
 	stroke: orange;
 }
-circle {
-}
 .boston_grid circle {
 	visibility: visible;
 	opacity: 1;
@@ -210,7 +208,6 @@ circle {
 
 }
 .boston_grid circle:hover { 
-	stroke: white;
 }
 circle.blue { 
 	fill: blue;
@@ -229,6 +226,11 @@ circle.red {
 }
 circle.none {
 	fill: none;
+}
+circle.highlight {
+	stroke: white;
+	stroke-width: 2px;
+	z-index: 1000;
 }
 #intro_fios_race {
 	background-color: lightgray;
@@ -250,7 +252,6 @@ circle.none {
 	stroke-dasharray: 2,2;
 }
 #yearly_chart {
-	border: 1px solid black;
 }
 #yearly_chart rect { 
 	fill: #8F1111;

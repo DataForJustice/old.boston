@@ -34,6 +34,8 @@ links: rm_links
 	ln -s ../../../bower_components/gsap/src/minified/TweenMax.min.js $(DOCUMENT_ROOT)/js/
 	ln -s ../../../bower_components/bootstrap/dist/js/bootstrap.min.js $(DOCUMENT_ROOT)/js/
 	ln -s ../../../bower_components/bootstrap/dist/css/bootstrap.min.css $(DOCUMENT_ROOT)/css/
+	ln -s ../../../bower_components/popcorn-complete/popcorn-complete.min.js $(DOCUMENT_ROOT)/js/ 
+
 rm_links: 
 	find . -type l | xargs rm -rf 
 bower_init: 
@@ -47,6 +49,7 @@ bower_init:
 	$(BOWER) install topojson
 	$(BOWER) install gsap
 	$(BOWER) install bootstrap
+	$(BOWER) install popcorn-complete
 bower_update:
 	find . -name bower.json -exec dirname {} \; | xargs -I {} $(BOWER) -d={} update
 #DATA INIT

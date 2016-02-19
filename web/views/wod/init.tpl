@@ -1,53 +1,109 @@
 <div style="height: 90%; position: fixed; top: 10vh; left: 0; width: 100%; z-index: 10;">
-	<div class="row" style="height: 100%;">
+	<div id="maps" class="row" style="height: 100%; visibility: hidden; position: relative;">
 		<div data-chart="map" data-map_layers="counties,blockgroups,neighborhoods,boston_grid" id="b_map" data-zoom_to="counties_25025" data-zoom_level="130" data-map_center_lat="42.319834" data-map_center_lon="-71.087294" class="col-md-6 map" style="height:100%; margin: 0 !important; padding: 0;">
 		</div>
 		<div data-chart="map" data-map_layers="counties,blockgroups,neighborhoods,boston_grid" id="a_map" data-zoom_to="counties_25025" data-zoom_level="130" data-map_center_lat="42.319834" data-map_center_lon="-71.087294" class="col-md-6 map" style="height:100%; margin: 0 !important; padding: 0;">
 		</div>
+		<h1 style="position: absolute; top: 1%; left: 10%">Drug Investigations</h1>
+		<h1 style="position: absolute; top: 1%; left: 60%">Drug Arrests</h1>
+		<div id="yearly_chart" data-chart="bars" style="position:absolute; left: 79%; top: 85%; width: 20%; height: 10%; margin: 0; padding: 0;">&nbsp;</div>
+		<div id="yearly_chart_arrests" data-chart="bars" style="position:absolute; left: 79%; top: 75%; width: 20%; height: 10%; margin: 0; padding: 0;">&nbsp;</div>
 	</div>
-	<!--<div data-chart="map" data-map_layers="counties,neighborhoods,boston_grid" id="mini_map" data-zoom_to="counties_25025" data-zoom_level="100" data-map_center_lat="42.319834" data-map_center_lon="-71.087294" style="position: absolute; top: 80%; left: 80%; width: 20%; height:20%; background-color: white; margin: 0; padding: 0;"></div>-->
-	<div id="yearly_chart" data-chart="bars" style="position:absolute; left: 79%; top: 89%; width: 20%; height: 10%; margin: 0; padding: 0;"></div>
-	<h1 style="position: absolute; top: 85%; left: 10%">Drug Investigations</h1>
-	<h1 style="position: absolute; top: 85%; left: 60%">Drug Arrests</h1>
+	<div id="pop_map" class="row" style="height: 100%; position: absolute; top: 0; width: 100%;">
+		<div data-chart="map" data-map_layers="counties,blockgroups,neighborhoods" id="p_map" data-zoom_to="counties_25025" data-zoom_level="110" data-map_center_lat="42.319834" data-map_center_lon="-71.087294" class="col-md-8 map col-md-offset-2" style="height: 80%; padding: 0;"></div>  
+	</div>
+<!--	<div id="race_comp" data-chart="pie" style="position: absolute; top: 79%; left: 1%; width: 20vh; height: 20vh; margin: 0; padding: 0; border: 1px solid black;"></div>
+-->
+	<div id="audio_container" style="position: absolute; top: 80%; left: 1%; width: 15%; height: 10%; background-color: red; display: none;">
+		<audio data-media="audio" id="narration" preload="auto" autobuffer>
+			<source src="/wod.mp3" type="audio/mp3"></source>	
+		</audio>
+		<span id="narration_a" data-subscribe_media="narration" data-subscribe_time="17" data-parse="p_lay_white">&nbsp;</span>
+		<span id="narration_b" data-subscribe_media="narration" data-subscribe_time="21" data-parse="p_lay_black">&nbsp;</span>
+		<span id="narration_c" data-subscribe_media="narration" data-subscribe_time="27" data-parse="p_lay_poc">&nbsp;</span>
+		<span id="narration_d" data-subscribe_media="narration" data-subscribe_time="36" data-parse="p_lay_white">&nbsp;</span> 
+		<span id="narration_e" data-subscribe_media="narration" data-subscribe_time="38" data-parse="p_lay_black">&nbsp;</span> 
+		<span id="narration_f" data-subscribe_media="narration" data-subscribe_time="40" data-parse="p_lay_white">&nbsp;</span> 
+		<span id="narration_g" data-subscribe_media="narration" data-subscribe_time="42" data-parse="p_lay_black">&nbsp;</span> 
+		<span id="narration_h" data-subscribe_media="narration" data-subscribe_time="50" data-parse="p_lay_white">&nbsp;</span> 
+		<span id="narration_i" data-subscribe_media="narration" data-subscribe_time="52" data-parse="p_lay_nonwhite">&nbsp;</span> 
+		<span id="narration_j" data-subscribe_media="narration" data-subscribe_time="54" data-parse="p_lay_white">&nbsp;</span> 
+		<span id="narration_k" data-subscribe_media="narration" data-subscribe_time="56" data-parse="p_lay_nonwhite">&nbsp;</span> 
+		<span id="narration_l" data-subscribe_media="narration" data-subscribe_time="80" data-hide="pop_map" data-show="maps">&nbsp;</span> 
+		<span id="narration_m" data-subscribe_media="narration" data-subscribe_time="90" data-parse="all_ctrl_b">&nbsp;</span> 
+		<span id="narration_n" data-subscribe_media="narration" data-subscribe_time="95" data-parse="all_ctrl_a">&nbsp;</span> 
+		<span id="narration_n" data-subscribe_media="narration" data-subscribe_time="122" data-parse="lay_white">&nbsp;</span>
+		<span id="narration_o" data-subscribe_media="narration" data-subscribe_time="124" data-parse="lay_nonwhite">&nbsp;</span>
+		<span id="narration_p" data-subscribe_media="narration" data-subscribe_time="125" data-parse="lay_white">&nbsp;</span>
+		<span id="narration_q" data-subscribe_media="narration" data-subscribe_time="127" data-parse="lay_nonwhite">&nbsp;</span>
+		<span id="narration_r" data-subscribe_media="narration" data-subscribe_time="129" data-show="y_2012">&nbsp;</span> 
+		<span id="narration_r" data-subscribe_media="narration" data-subscribe_time="129" data-show="overlays">&nbsp;</span> 
+		<a id="p_lay_white" data-control data-control_chart="p_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["white"]}{/literal}'>White</a>
+		<a id="p_lay_nonwhite" data-control data-control_chart="p_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["black", "poc"]}{/literal}'>Non-white</a>
+		<a id="p_lay_black" data-control data-control_chart="p_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["black"]}{/literal}'>Black</a>
+		<a id="p_lay_poc" data-control data-control_chart="p_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["poc"]}{/literal}'>Other P.O.C.</a>
+		<a id="all_ctrl_a" data-control_chart="a_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"ncode": ["ARREST"]}{/literal}'>1.</a>
+		<a id="all_ctrl_b" data-control_chart="b_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"ncode": ["IVDRUG", "IVPER", "IVPREM", "INVEST", "IVMV"]}{/literal}'>2.</a>
+	</div>
+	<!--<div data-chart="map" data-map_layers="counties,neighborhoods,boston_grid" id="mini_map" data-zoom_to="counties_25025" data-zoom_level="100" data-map_center_lat="42.319834" data-map_center_lon="-71.087294" style="position: absolute; top: 79%; left: 40%; width: 20%; height:20%; background-color: white; margin: 0; padding: 0;"></div>-->
 </div>
 <div style="position: relative; z-index: 10; height: 0;">
-	<section data-slide="main" id="header">
+	<section id="slide_intro" data-slide="main" data-show="intro">
+		<!--<div class="scene_separator row">Hola</div>-->
+	</section>
+	<section data-slide="main" id="header" data-hide="intro">
 		<div class="scene_separator row">
 			<div class="col-md-7">
 				<h1 style="text-align: left;">Drug charges in Boston</h1>
 			</div>
-			<div class="col-md-5">
+			<div id="overlays" class="col-md-5" style="visibility: hidden">
 				Population overlays: 
-				<a data-control data-control_chart="a_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["white"]}{/literal}'><b data-control_chart="b_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["white"]}{/literal}'>White</b></a>,
-				<a data-control data-control_chart="a_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["black", "poc"]}{/literal}'><b data-control_chart="b_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["black", "poc"]}{/literal}'>Non-white</b></a>,
-				<a data-control data-control_chart="a_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["black"]}{/literal}'><b data-control_chart="b_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["black"]}{/literal}'>Black</b></a>,
-				<a data-control data-control_chart="a_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["poc"]}{/literal}'><b data-control_chart="b_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["poc"]}{/literal}'>Other people of color</b></a>
+				<a id="lay_white" data-control data-control_chart="a_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["white"]}{/literal}' data-parse="lay_white_b"><b id="lay_white_b" data-control_chart="b_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["white"]}{/literal}'>White</b></a>,
+				<a id="lay_nonwhite" data-control data-control_chart="a_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["black", "poc"]}{/literal}' data-parse="lay_nonwhite_b"><b  id="lay_nonwhite_b" data-control_chart="b_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["black", "poc"]}{/literal}'>Non-white</b></a>,
+				<a id="lay_black" data-control data-control_chart="a_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["black"]}{/literal}' data-parse="lay_black_b"><b id="lay_black_b" data-control_chart="b_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["black"]}{/literal}'>Black</b></a>,
+				<a id="lay_poc" data-control data-control_chart="a_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["poc"]}{/literal}' data-parse="lay_poc_b"><b id="lay_poc_b" data-control_chart="b_map" data-quantify="blockgroups" data-quantifier="race" data-quantifier_args='{literal}{"race": ["poc"]}{/literal}'>Other people of color</b></a>
 			</div>
 		</div>
 	</section>
-	<section id="maps" style="height: 0px;">
+	<section id="slide_maps" style="height: 0px;">
 		<div id="movie">
-			<div class="scene">
-				<div data-control_chart="a_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"ncode": ["ARREST"]}{/literal}'></div>
-				<div data-control_chart="b_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"ncode": ["IVDRUG", "IVPER", "IVPREM", "INVEST", "IVMV"]}{/literal}'></div>
+			<div class="scene" data-control_media="narration" data-media_play data-hide="maps" data-show="pop_map">
+				<div class="hstring">
+					<div class="scene_content">
+						<h1>  </h1>
+					</div>
+				</div>
+			</div>
+			<!--
+			<div class="scene" data-parse="all_ctrl_a,all_ctrl_b">
+				<div id="all_ctrl_a" data-control_chart="a_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"ncode": ["ARREST"]}{/literal}'></div>
+				<div id="all_ctrl_b" data-control_chart="b_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"ncode": ["IVDRUG", "IVPER", "IVPREM", "INVEST", "IVMV"]}{/literal}'></div>
 				<div class="hstring"> 
 					<div class="scene_content">
 						<h1>2012 - 2015</h1>
 					</div>
 				</div>
 			</div>
-			<div class="scene">
-				<div data-control_chart="a_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2012, "ncode": ["ARREST"]}{/literal}'></div>
-				<div data-control_chart="b_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2012, "ncode": ["IVDRUG", "IVPER", "IVPREM", "INVEST", "IVMV"]}{/literal}'></div>
+			-->
+			<div id="y_2012" class="scene" data-parse="2012_ctrl_a,2012_ctrl_b" style="visibility: hidden;">
+				<div id="2012_ctrl_a" data-control_chart="a_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2012, "ncode": ["ARREST"]}{/literal}'></div>
+				<div id="2012_ctrl_b" data-control_chart="b_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2012, "ncode": ["IVDRUG", "IVPER", "IVPREM", "INVEST", "IVMV"]}{/literal}'></div>
 				<div class="hstring">
 					<div class="scene_content">
+						<h1>Scroll down for more</h1>
 						<h1>2012</h1>
+						<!--<div id="video_2012" data-video="youtube" data-video_url="http://www.youtube.com/watch?v=CxvgCLgwdNk" style="width: 230px; height: 150px; background-color: white;"></div>-->
+						<!--<div id="video_2012_v" data-media="vimeo" data-media_url="https://vimeo.com/128869916" style="width: 100%; height: 150px; background-color: white;"></div>-->
+						<span id="v2012_ctrl_w" data-subscribe_media="video_2012_v" data-subscribe_time="5" data-parse="lay_white"><a data-control data-control_media="video_2012_v" data-media_time="5">white</a></span>
+						<span id="v2012_ctrl_nw" data-subscribe_media="video_2012_v" data-subscribe_time="7" data-parse="lay_nonwhite"><a data-control data-control_media="video_2012_v" data-media_time="7">Non-white</a></span>
+						<span id="v2012_ctrl_b" data-subscribe_media="video_2012_v" data-subscribe_time="10" data-parse="lay_black"><a data-control data-control_media="video_2012_v" data-media_time="10">Black</a></span>
+						<span id="v2012_ctrl_poc" data-subscribe_media="video_2012_v" data-subscribe_time="12" data-parse="lay_poc"><a data-control data-control_media="video_2012_v" data-media_time="12">Other P.O.C.</a></span>
 					</div>
 				</div>
 			</div>
-			<div class="scene">
-				<div data-control_chart="a_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2013, "ncode": ["ARREST"]}{/literal}'></div>
-				<div data-control_chart="b_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2013, "ncode": ["IVDRUG", "IVPER", "IVPREM", "INVEST", "IVMV"]}{/literal}'></div>
+			<div class="scene" data-parse="2013_ctrl_a,2013_ctrl_b" data-control_media="video_2012_v" data-media_stop>
+				<div id="2013_ctrl_a" data-control_chart="a_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2013, "ncode": ["ARREST"]}{/literal}'></div>
+				<div id="2013_ctrl_b" data-control_chart="b_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2013, "ncode": ["IVDRUG", "IVPER", "IVPREM", "INVEST", "IVMV"]}{/literal}'></div>
 				<div class="hstring">
 					<div class="scene_content">
 						<h1>2013</h1>
@@ -55,18 +111,18 @@
 				</div>
 
 			</div>
-			<div class="scene">
-				<div data-control_chart="a_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2014, "ncode": ["ARREST"]}{/literal}'></div>
-				<div data-control_chart="b_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2014, "ncode": ["IVDRUG", "IVPER", "IVPREM", "INVEST", "IVMV"]}{/literal}'></div>
+			<div class="scene" data-parse="2014_ctrl_a,2014_ctrl_b">
+				<div id="2014_ctrl_a" data-control_chart="a_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2014, "ncode": ["ARREST"]}{/literal}'></div>
+				<div id="2014_ctrl_b" data-control_chart="b_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2014, "ncode": ["IVDRUG", "IVPER", "IVPREM", "INVEST", "IVMV"]}{/literal}'></div>
 				<div class="hstring">
 					<div class="scene_content">
 						<h1>2014</h1>
 					</div>
 				</div>
 			</div>
-			<div class="scene">
-				<div data-control_chart="a_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2015, "ncode": ["ARREST"]}{/literal}'></div>
-				<div data-control_chart="b_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2015, "ncode": ["IVDRUG", "IVPER", "IVPREM", "INVEST", "IVMV"]}{/literal}'></div>
+			<div class="scene" data-parse="2015_ctrl_a,2015_ctrl_b">
+				<div id="2015_ctrl_a" data-control_chart="a_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2015, "ncode": ["ARREST"]}{/literal}'></div>
+				<div id="2015_ctrl_b" data-control_chart="b_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2015, "ncode": ["IVDRUG", "IVPER", "IVPREM", "INVEST", "IVMV"]}{/literal}'></div>
 				<div class="hstring">
 					<div class="scene_content">
 						<h1>2015</h1>
