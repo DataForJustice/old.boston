@@ -93,8 +93,9 @@
 				</div>
 			</div>
 			-->
-			<div id="y_2012" class="scene" data-parse="y_2012_bis,2012_ctrl_a,2012_ctrl_b" style="visibility: hidden;" data-show="maps" data-hide="pop_map" data-control_media="narration" data-media_stop>
+			<div id="y_2012" class="scene" data-parse="y_2012_bis,y_2012_overlays,2012_ctrl_a,2012_ctrl_b" style="visibility: hidden;" data-show="maps" data-hide="pop_map" data-control_media="narration" data-media_stop>
 				<div id="y_2012_bis" data-show="y_2012"></div>
+				<div id="y_2012_overlays" data-show="overlays"></div>
 				<div id="2012_ctrl_a" data-control_chart="a_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2012, "ncode": ["ARREST"]}{/literal}'></div>
 				<div id="2012_ctrl_b" data-control_chart="b_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2012, "ncode": ["IVDRUG", "IVPER", "IVPREM", "INVEST", "IVMV"]}{/literal}'></div>
 				<div class="hstring">
