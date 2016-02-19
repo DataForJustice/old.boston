@@ -9,6 +9,7 @@ web/htdocs/js/debug.addIndicators.min.js
 web/htdocs/js/topojson.js
 web/htdocs/css/bootstrap.min.css
 web/htdocs/js/bootstrap.min.js
+web/htdocs/js/popcorn-complete.min.js
 bower_components
 bowerphp
 data/raw/

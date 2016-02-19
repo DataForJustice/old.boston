@@ -63,23 +63,16 @@ $(document).ready (function () {
 				var r = data.values;
 				 
 				var extent = data.minmean (
+					// TODO this will be substituted once Nestify supports key:values
 					function (d) { 
-						if (args.d_year) { 
-							return d.values.sum (
-								function (a) { 
-									if (args.d_year == a.key) {  
-										return a.values.sum (
-											function (z) { 
-												if (args.ncode.indexOf (z.key) !== -1) { return z.values.count; } 
-											}); 
-									} 
-								}); 
+						if (args.d_year) { // nested by year 
+							return d.values.sum (function (a) { if (args.d_year == a.key) {  return a.values.sum (function (z) { if (args.ncode.indexOf (z.key) !== -1) { return z.values.count; } }); } }); 
 						}
 						return d.values.sum (function (a) { if (args.ncode.indexOf (a.key) !== -1) { return a.values.count; } });
 					}
 				);
 				var scale = d3.scale.sqrt ().domain (extent);
-				var scale = d3.scale.pow ().exponent (.5).domain (extent);
+				//var scale = d3.scale.pow ().exponent (.5).domain (extent);
 				return {data: data, scale: scale};
 			},
 			year: function (args) { 

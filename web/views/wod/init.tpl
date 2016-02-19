@@ -85,19 +85,15 @@
 				</div>
 			</div>
 			-->
-			<div id="y_2012" class="scene" data-parse="2012_ctrl_a,2012_ctrl_b" style="visibility: hidden;">
+			<div id="y_2012" class="scene" data-parse="y_2012_bis,2012_ctrl_a,2012_ctrl_b" style="visibility: hidden;" data-show="maps" data-hide="pop_map" data-control_media="narration" data-media_stop>
+				<div id="y_2012_bis" data-show="y_2012"></div>
 				<div id="2012_ctrl_a" data-control_chart="a_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2012, "ncode": ["ARREST"]}{/literal}'></div>
 				<div id="2012_ctrl_b" data-control_chart="b_map" data-quantify="boston_grid" data-quantifier="wod" data-quantifier_args='{literal}{"d_year": 2012, "ncode": ["IVDRUG", "IVPER", "IVPREM", "INVEST", "IVMV"]}{/literal}'></div>
 				<div class="hstring">
 					<div class="scene_content">
-						<h1>Scroll down for more</h1>
 						<h1>2012</h1>
 						<!--<div id="video_2012" data-video="youtube" data-video_url="http://www.youtube.com/watch?v=CxvgCLgwdNk" style="width: 230px; height: 150px; background-color: white;"></div>-->
 						<!--<div id="video_2012_v" data-media="vimeo" data-media_url="https://vimeo.com/128869916" style="width: 100%; height: 150px; background-color: white;"></div>-->
-						<span id="v2012_ctrl_w" data-subscribe_media="video_2012_v" data-subscribe_time="5" data-parse="lay_white"><a data-control data-control_media="video_2012_v" data-media_time="5">white</a></span>
-						<span id="v2012_ctrl_nw" data-subscribe_media="video_2012_v" data-subscribe_time="7" data-parse="lay_nonwhite"><a data-control data-control_media="video_2012_v" data-media_time="7">Non-white</a></span>
-						<span id="v2012_ctrl_b" data-subscribe_media="video_2012_v" data-subscribe_time="10" data-parse="lay_black"><a data-control data-control_media="video_2012_v" data-media_time="10">Black</a></span>
-						<span id="v2012_ctrl_poc" data-subscribe_media="video_2012_v" data-subscribe_time="12" data-parse="lay_poc"><a data-control data-control_media="video_2012_v" data-media_time="12">Other P.O.C.</a></span>
 					</div>
 				</div>
 			</div>
